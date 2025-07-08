@@ -244,14 +244,13 @@
                 
                 let line = lines[lineIndex];
 
-                try {
-                    math.evaluate(line, scope);
-                } catch (e) {
-                    alert(e.message);
-                    return;
-                }
+                let result = null;
 
-                let result = math.evaluate(line, scope);
+                try {
+                    result = math.evaluate(line, scope);
+                } catch (e) {
+                    result = e.message;
+                }
 
                 if(result != undefined){
                     pad.textContent = pad.textContent.substring(0, start) + " => " + result + pad.textContent.substring(start);
