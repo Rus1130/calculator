@@ -1,0 +1,104 @@
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    #container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 10px;
+        height: 100vh;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    #container > div {
+        border: 1px solid #ccc;
+        width: 100%;
+        height: 100%;
+    }
+
+    #notes {
+        font-family: monospace;
+        width: 100%;
+        height: 100%;
+        resize: none;
+        outline: none;
+        border: none;
+        white-space-collapse: preserve;
+    }
+</style>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.3/math.js"></script>
+</head>
+<body>
+    <div id="notes" contenteditable="plaintext-only">x+1
+
+
+
+
+
+
+
+
+
+
+[symbols]
+x=3
+</div>
+</body>
+<script>
+    notes = document.getElementById('notes');
+
+    let scope = {}
+
+    notes.addEventListener('keydown', function(event) {
+        if (event.key === 'Tab') {
+            // symbol getting
+            scope = notes.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n").reduce((acc, line) => {
+                let [key, value] = line.split('=').map(s => s.trim());
+                if (key && value) {
+                    acc[key] = parseFloat(value);
+                }
+                return acc;
+            }, {});
+
+            // actual calculation
+            event.preventDefault();
+            let selection = window.getSelection();
+            let start = selection.anchorOffset;
+            let lines = notes.textContent.substring(0, start).split(/\n/)
+
+            // find what line the cursor is on based on the start variable, and the length of each index
+            let lineIndex = 0;
+            let lineLength = 0;
+            for (let i = 0; i < lines.length; i++) {
+                lineLength += lines[i].length + 1; // +1 for the newline character
+                if (lineLength > start) {
+                    lineIndex = i;
+                    break;
+                }
+            }
+            
+            let line = lines[lineIndex];
+
+            try {
+                math.evaluate(line, scope);
+            } catch (e) {
+                alert(e.message);
+                return;
+            }
+
+            let result = math.evaluate(line, scope);
+
+            if(result != undefined){
+                notes.textContent = notes.textContent.substring(0, start) + " => " + result + notes.textContent.substring(start);
+
+                selection.collapse(notes.firstChild, start + 4 + result.toString().length);
+            }
+        }
+    });
+</script>

@@ -1,0 +1,35 @@
+{
+    "name": "calculator",
+    "version": "1.0.0",
+    "description": "personal calculator",
+    "keywords": [
+        "calc"
+    ],
+    "homepage": "https://github.com/Rus1130/calculator#readme",
+    "bugs": {
+        "url": "https://github.com/Rus1130/calculator/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Rus1130/calculator.git"
+    },
+    "license": "ISC",
+    "author": "rus1130",
+    "type": "commonjs",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "build": {
+        "appId": "com.example.myapp",
+        "productName": "Calculator",
+        "win": {
+            "target": "nsis"
+        }
+    },
+    "devDependencies": {
+        "electron": "^37.2.0",
+        "electron-builder": "^26.0.12"
+    }
+}
