@@ -249,7 +249,7 @@
                 try {
                     result = math.evaluate(line, scope);
                 } catch (e) {
-                    result = e.message;
+                    result = "ERR! " + e.message;
                 }
 
                 if(result != undefined){
