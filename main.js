@@ -5,11 +5,6 @@ function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        webPreferences: {
-            nodeIntegration: true, // Allows Node.js in renderer
-            contextIsolation: false, // For simple demos, disable isolation
-            webSecurity: false
-        }
     });
 
     win.loadFile('index.html');
