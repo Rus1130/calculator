@@ -154,7 +154,7 @@
         newTab.setAttribute('data-tab', tabCounter);
 
         let notepad = document.createElement('iframe');
-        notepad.src = '/notepad.html';
+        notepad.src = 'notepad.html';
         notepad.id = `notepad-${tabCounter}`;
         notepad.style.display = 'none';
 
@@ -178,9 +178,23 @@
 
         newTab.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            let newName = prompt("Enter new name for the tab:", newTab.textContent);
-            if (newName) {
-                newTab.textContent = newName;
+            newTab.contentEditable = "plaintext-only";
+            newTab.style.outline = "1px solid #007bff";
+            newTab.focus();
+            // highlight the name with range
+            let range = document.createRange();
+            let selection = window.getSelection();
+            range.selectNodeContents(newTab);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        });
+
+        newTab.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                newTab.contentEditable = "false";
+                newTab.style.outline = "none";
             }
         });
 
