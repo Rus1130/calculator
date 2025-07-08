@@ -35,8 +35,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.3/math.js"></script>
 </head>
 <body>
-    <div id="notes" contenteditable="plaintext-only">x+1
-
+    <div id="notes" contenteditable="plaintext-only" spellcheck="false">
 
 
 
@@ -47,7 +46,7 @@
 
 
 [symbols]
-x=3
+
 </div>
 </body>
 <script>
@@ -55,8 +54,16 @@ x=3
 
     let scope = {}
 
-    notes.addEventListener('keydown', function(event) {
-        if (event.key === 'Tab') {
+    function keybindCondition(key, meta = { shiftKey: false, ctrlKey: false, altKey: false }, e){
+        meta.shiftKey = meta.shiftKey || false;
+        meta.ctrlKey = meta.ctrlKey || false;
+        meta.altKey = meta.altKey || false;
+
+        return e.key == key && e.shiftKey == meta.shiftKey && e.ctrlKey == meta.ctrlKey && e.altKey == meta.altKey;
+    }
+
+    notes.addEventListener('keydown', function(e) {
+        if(keybindCondition("Tab", {shiftKey: false}, e)) {
             // symbol getting
             scope = notes.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n").reduce((acc, line) => {
                 let [key, value] = line.split('=').map(s => s.trim());
@@ -67,10 +74,11 @@ x=3
             }, {});
 
             // actual calculation
-            event.preventDefault();
+            e.preventDefault();
             let selection = window.getSelection();
             let start = selection.anchorOffset;
-            let lines = notes.textContent.substring(0, start).split(/\n/)
+            let lines = notes.textContent.substring(0, start).split(/\n/);
+            console.log(lines)
 
             // find what line the cursor is on based on the start variable, and the length of each index
             let lineIndex = 0;
@@ -99,6 +107,38 @@ x=3
 
                 selection.collapse(notes.firstChild, start + 4 + result.toString().length);
             }
+        } else if(keybindCondition("Tab", {shiftKey: true}, e)) {
+            // highlight the whole current line
+            e.preventDefault();
+            let selection = window.getSelection();
+            let start = selection.anchorOffset;
+            let lines = notes.textContent.substring(0, start).split(/\n/);
+            let lineIndex = 0;
+            let lineLength = 0;
+
+            for (let i = 0; i < lines.length; i++) {
+                lineLength += lines[i].length + 1; // +1 for the newline character
+                if (lineLength > start) {
+                    lineIndex = i;
+                    break;
+                }
+            }
+
+            let line = lines[lineIndex];
+
+            let lineStart = notes.textContent.lastIndexOf("\n", start - 1) + 1; // find the start of the line
+            let lineEnd = notes.textContent.indexOf("\n", start); // find the end of the line
+
+            if (lineEnd === -1) {
+                lineEnd = notes.textContent.length; // if no newline found, set end to the end of the text
+            }
+
+            selection.removeAllRanges();
+            let range = document.createRange();
+            range.setStart(notes.firstChild, lineStart);
+            range.setEnd(notes.firstChild, lineEnd);
+            selection.addRange(range);
+
         }
     });
 </script>
