@@ -127,11 +127,14 @@
         <div class="action-tab" id="delete"><u>Del</u>ete Current Tab</div>
         <div class="action-tab" id="export"><u>E</u>xport Tabs</div>
         <div class="action-tab" id="import"><u>I</u>mport Tabs</div>
+        <div class="action-tab" id="docs" onclick="openDocs()">Documentation</div>
     </div>
     <div id="container"></div>
 </body>
  
 <script>
+    const { shell } = require('electron');
+    
     let topBar = document.getElementById('top-bar');
     let container = document.getElementById('container');
 
@@ -139,37 +142,78 @@
     let exportButton = document.getElementById('export');
     let importButton = document.getElementById('import');
     let newTabButton = document.getElementById('new');
+    let docsButton = document.getElementById('docs');
 
     const loadingScreen = document.getElementById('loading-screen');
     loadingScreen.style.display = 'none'; // Hide the loading screen after everything is loaded
 
-    let clickTimer = null;
-
     let tabCounter = 0;
 
-    const tabHistory = [];
-    /*
-    record history on name change, and on key up inside of a notepad
+    function openDocs() {
+        shell.openExternal('https://rus1130.github.io/projects/mdparser.html?url=https://rus1130.github.io/calculator/README.md');
+    }
 
-        [
-            {
-                index: 1,
-                name: tab.textContent,
-                content: calcpadContent
-            },
-            {
-                index: 1,
-                name: tab.textContent,
-                content: calcpadContent
+    function restoreCaretOffset(pad, offset) {
+        const sel = window.getSelection();
+        const textLength = pad.textContent.length;
+        const safeOffset = Math.min(offset, textLength);
+
+        const textNode = pad.firstChild;
+        if (textNode) {
+            sel.removeAllRanges();
+            const range = document.createRange();
+            range.setStart(textNode, safeOffset);
+            range.collapse(true);
+            sel.addRange(range);
+        }
+    }
+
+    function getCaretCharacterOffsetWithin(element) {
+        const selection = window.getSelection();
+        let charCount = -1;
+
+        if (selection.anchorNode && element.contains(selection.anchorNode)) {
+            const range = selection.getRangeAt(0);
+            const preRange = range.cloneRange();
+            preRange.selectNodeContents(element);
+            preRange.setEnd(range.endContainer, range.endOffset);
+            charCount = preRange.toString().length;
+        }
+
+        return charCount;
+    }
+
+    function setCaretPosition(element, offset) {
+        let node = element.firstChild;
+        let charsLeft = offset;
+
+        // Walk through the node tree to find the right spot
+        function findNode(node) {
+            while (node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (charsLeft <= node.textContent.length) {
+                        return { node, offset: charsLeft };
+                    } else {
+                        charsLeft -= node.textContent.length;
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const result = findNode(node.firstChild);
+                    if (result) return result;
+                }
+                node = node.nextSibling;
             }
-        ]
-    */
+            return null;
+        }
 
-    function sendToAllTabs(message){
-        let iframes = document.querySelectorAll('iframe');
-        iframes.forEach(iframe => {
-            iframe.contentWindow.postMessage(message, '*');
-        });
+        const result = findNode(node);
+        if (result) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(result.node, result.offset);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
     }
 
     function keybindCondition(key, meta = { shiftKey: false, ctrlKey: false, altKey: false }, e){
@@ -178,6 +222,33 @@
         meta.altKey = meta.altKey || false;
 
         return e.key == key && e.shiftKey == meta.shiftKey && e.ctrlKey == meta.ctrlKey && e.altKey == meta.altKey;
+    }
+
+    function getLines(pad){
+        let selection = window.getSelection();
+        let start = selection.anchorOffset;
+        let lines = pad.textContent.substring(0, start).split(/\n/);
+
+        return lines;
+    }
+
+    function getCurrentLine(pad){
+        let selection = window.getSelection();
+        let start = selection.anchorOffset;
+        let lines = getLines(pad);
+
+        let lineIndex = 0;
+        let lineLength = 0;
+        for (let i = 0; i < lines.length; i++) {
+            lineLength += lines[i].length + 1; // +1 for the newline character
+            if (lineLength > start) {
+                lineIndex = i;
+                break;
+            }
+        }
+        
+        let line = lines[lineIndex];
+        return line
     }
 
     document.addEventListener('keydown', (e) => {
@@ -232,6 +303,38 @@
 
         let scope = {};
 
+        let contentStack = [pad.textContent];
+        let caretStack = [getCaretCharacterOffsetWithin(pad)];
+
+        pad.addEventListener('keydown', function(e){
+            if(keybindCondition("z", {ctrlKey: true}, e)){
+                e.preventDefault();
+                
+                contentStack.pop();
+                caretStack.pop();
+
+                let lastContent = contentStack[contentStack.length - 1];
+                let lastCaretOffset = caretStack[caretStack.length - 1];
+
+                if(lastContent != undefined){
+                    pad.textContent = lastContent;
+                    setCaretPosition(pad, lastCaretOffset);
+                }
+            }
+
+            contentStack.push(pad.textContent);
+            caretStack.push(getCaretCharacterOffsetWithin(pad));
+
+            contentStack = [...new Set(contentStack)];
+            caretStack = [...new Set(caretStack)];
+        })
+
+        pad.addEventListener('keyup', function(e){
+            if(keybindCondition("z", {ctrlKey: true}, e)){
+                e.preventDefault();
+            }
+        })
+
         pad.addEventListener('keydown', function(e) {
             if(keybindCondition("Tab", {shiftKey: false}, e)) {
                 // symbol getting
@@ -247,20 +350,8 @@
                 e.preventDefault();
                 let selection = window.getSelection();
                 let start = selection.anchorOffset;
-                let lines = pad.textContent.substring(0, start).split(/\n/);
 
-                // find what line the cursor is on based on the start variable, and the length of each index
-                let lineIndex = 0;
-                let lineLength = 0;
-                for (let i = 0; i < lines.length; i++) {
-                    lineLength += lines[i].length + 1; // +1 for the newline character
-                    if (lineLength > start) {
-                        lineIndex = i;
-                        break;
-                    }
-                }
-                
-                let line = lines[lineIndex];
+                let line = getCurrentLine(pad);
 
                 let lastArrow = line.lastIndexOf(" => ");
                 let lastSemi = line.lastIndexOf(";");
@@ -289,19 +380,8 @@
                 e.preventDefault();
                 let selection = window.getSelection();
                 let start = selection.anchorOffset;
-                let lines = pad.textContent.substring(0, start).split(/\n/);
-                let lineIndex = 0;
-                let lineLength = 0;
 
-                for (let i = 0; i < lines.length; i++) {
-                    lineLength += lines[i].length + 1; // +1 for the newline character
-                    if (lineLength > start) {
-                        lineIndex = i;
-                        break;
-                    }
-                }
-
-                let line = lines[lineIndex];
+                let line = getCurrentLine(pad);
 
                 let newlineIndex = pad.textContent.lastIndexOf("\n", start - 1);
                 let semicolonIndex = pad.textContent.lastIndexOf(";", start - 1);
@@ -324,19 +404,8 @@
                 e.preventDefault();
                 let selection = window.getSelection();
                 let start = selection.anchorOffset;
-                let lines = pad.textContent.substring(0, start).split(/\n/);
-                let lineIndex = 0;
-                let lineLength = 0;
 
-                for (let i = 0; i < lines.length; i++) {
-                    lineLength += lines[i].length + 1; // +1 for the newline character
-                    if (lineLength > start) {
-                        lineIndex = i;
-                        break;
-                    }
-                }
-
-                let line = lines[lineIndex];
+                let line = getCurrentLine(pad);
 
                 let lineStart = pad.textContent.lastIndexOf("\n", start - 1) + 1;
                 let lineEnd = pad.textContent.indexOf("\n", start); // find the end of the line

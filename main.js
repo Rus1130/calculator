@@ -1,10 +1,14 @@
-const { app, BrowserWindow, Menu, shell } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, shell, contextBridge } = require('electron');
 
 function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
+        title: "Calcpad v.1.1.1",
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
     });
     
     // const customMenu = Menu.buildFromTemplate([
@@ -20,8 +24,9 @@ function createWindow () {
     //     },
     // ]);
 
-    Menu.setApplicationMenu(null);
+    // Menu.setApplicationMenu(null);
     win.loadFile('index.html');
+    win.webContents.openDevTools({ mode: 'detach' });
 }
 
 app.whenReady().then(() => {

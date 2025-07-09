@@ -1,4 +1,5 @@
 # Keybinds
+## Evaluation and Highlighting
 * `Tab` to evaluate a line
     ```
     1 + 1 [Tab]
@@ -26,16 +27,25 @@
     [Shift + Ctrl + Tab]
     [Highlight begin]Hello! this is text. ; 1 + 1 => 2[Highlight end]
     ```
-* `Left Click` a tab to select it
-* `Right Click` a tab to rename it
-* `Ctrl + E` to export tabs to a file
-* `Ctrl + I` to import tabs from a file
-* `Ctrl + Tab` to create a new tab (does not work in browser, app only)
-* `Ctrl + Delete` to delete the current tab
-* `Ctrl + Left/Right Arrow` to cycle tabs
+
 * Define variables below `[symbols]`
     ```
     x + 1 => 3
     [symbols]
     x=2
     ```
+
+## Navigation
+* `Left Click` a tab to select it
+* `Ctrl + Left/Right Arrow` to cycle tabs
+* `Ctrl + S` to jump to the `[Symbols]` section, then `Ctrl + S` again to jump back to where you were
+
+## Modification
+* `Ctrl + Delete` to delete the current selected tab
+* `Right Click` a tab to rename it
+* `Ctrl + Tab` to create a new tab (does not work in browser, app only)
+
+## Other
+* `Ctrl + E` to export tabs to a file
+* `Ctrl + I` to import tabs from a file
+* `Ctrl + Z` to undo

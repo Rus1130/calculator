@@ -1,6 +1,6 @@
 {
   "name": "calcpad",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "personal calculator",
   "keywords": [
     "calc"
@@ -23,7 +23,7 @@
   },
   "build": {
     "appId": "calcpad.app",
-    "productName": "Calcpad",
+    "productName": "calcpad",
     "win": {
       "target": [
         {
