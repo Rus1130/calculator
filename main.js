@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, contextBridge } = require('electron');
+const { app, BrowserWindow, shell, contextBridge, Menu } = require('electron');
 
 function createWindow () {
     const win = new BrowserWindow({
