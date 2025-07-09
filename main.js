@@ -10,23 +10,10 @@ function createWindow () {
             contextIsolation: false
         }
     });
-    
-    // const customMenu = Menu.buildFromTemplate([
-    //     {
-    //         label: 'Help',
-    //         submenu: [
-    //             {
-    //                 label: 'Documentation',
-    //                 accelerator: 'CmdOrCtrl+/',
-    //                 click: () => shell.openExternal('https://rus1130.github.io/projects/mdparser.html?url=https://rus1130.github.io/calculator/README.md')
-    //             },
-    //         ]
-    //     },
-    // ]);
 
-    // Menu.setApplicationMenu(null);
+    Menu.setApplicationMenu(null);
     win.loadFile('index.html');
-    win.webContents.openDevTools({ mode: 'detach' });
+    // win.webContents.openDevTools({ mode: 'detach' });
 }
 
 app.whenReady().then(() => {

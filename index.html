@@ -134,7 +134,7 @@
  
 <script>
     const { shell } = require('electron');
-    
+
     let topBar = document.getElementById('top-bar');
     let container = document.getElementById('container');
 
@@ -306,7 +306,48 @@
         let contentStack = [pad.textContent];
         let caretStack = [getCaretCharacterOffsetWithin(pad)];
 
+        let lastCaretPositionForSymbols = 0;
+
+        let inSymbols = false;
+
+        document.addEventListener("selectionchange", (e) => {
+            let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
+            let caretPosition = getCaretCharacterOffsetWithin(pad);
+
+            if(symbolsPosition == -1){
+                inSymbols = false;
+                return;
+            }
+
+            if(caretPosition > (symbolsPosition + 9)){
+                inSymbols = true;
+            } else {
+                inSymbols = false;
+            }
+
+            if(inSymbols == false){
+                lastCaretPositionForSymbols = caretPosition
+            }
+        });
+
         pad.addEventListener('keydown', function(e){
+            if(keybindCondition("s", {ctrlKey: true}, e)){
+                e.preventDefault();
+                if(!inSymbols){
+                    let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
+                    let lines = pad.textContent.substring(symbolsPosition + 9).split("\n");
+                    let emptyLineIndex = lines.findIndex(line => line.trim() === "");
+                    if(emptyLineIndex === -1) {
+                        pad.textContent += "\n";
+                        emptyLineIndex = lines.length;
+                    }
+                    let newCaretPosition = symbolsPosition + 9 + emptyLineIndex + 1;
+
+                    setCaretPosition(pad, newCaretPosition);
+                } else {
+                    setCaretPosition(pad, lastCaretPositionForSymbols);
+                }
+            }
             if(keybindCondition("z", {ctrlKey: true}, e)){
                 e.preventDefault();
                 
