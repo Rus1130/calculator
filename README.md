@@ -1,39 +1,47 @@
 # Keybinds
 ## Evaluation and Highlighting
-* `Tab` to evaluate a line
-    ```
-    1 + 1 [Tab]
-    turns into:
-    1 + 1 => 2
-    ```
-    * You can chain tabs together on the same line
-        ```
-        1 + 1 => 2 * 6 => 12
-        ```
-    * Type a semicolon to allow math to be evaluated on the same line as text
-        ```
-        hello! this is text. ; 1 + 1 => 2
-        ```
-* `Shift + Tab` to highlight a line
-    * Highlighting this way is blocked by semicolons, if the cursor is to the right of it
-        ```
-        Hello! this is text. ; 1 + 1 => 2
-        [Shift + Tab]
-        Hello! this is text. ;[Highlight begin] 1 + 1 => 2[Highlight end]
-        ```
-* `Shift + Ctrl + Tab` to highlight an entire line, regardless of semicolons
-    ```
-    Hello! this is text. ; 1 + 1 => 2
-    [Shift + Ctrl + Tab]
-    [Highlight begin]Hello! this is text. ; 1 + 1 => 2[Highlight end]
-    ```
+`Tab` to evaluate a line:
+```
+1 + 1 [Tab]
+turns into:
+1 + 1 => 2
+```
+<br>
 
-* Define variables below `[symbols]`
-    ```
-    x + 1 => 3
-    [symbols]
-    x=2
-    ```
+You can chain tabs together on the same line:
+```
+1 + 1 => 2 * 6 => 12
+```
+<br>
+
+Type a semicolon to allow math to be evaluated on the same line as text:
+```
+hello! this is text. ; 1 + 1 => 2
+```
+<br>
+
+`Shift + Tab` to highlight a line. Highlighting this way is blocked by semicolons, if the cursor is to the right of it.
+```
+Hello! this is text. ; 1 + 1 => 2
+[Shift + Tab]
+Hello! this is text. ;[Highlight begin] 1 + 1 => 2[Highlight end]
+```
+<br>
+
+`Shift + Ctrl + Tab` to highlight an entire line, regardless of semicolons:
+```
+Hello! this is text. ; 1 + 1 => 2
+[Shift + Ctrl + Tab]
+[Highlight begin]Hello! this is text. ; 1 + 1 => 2[Highlight end]
+```
+<br>
+
+Define variables below `[symbols]`:
+```
+x + 1 => 3
+[symbols]
+x=2
+``` 
 
 ## Navigation
 * `Left Click` a tab to select it
