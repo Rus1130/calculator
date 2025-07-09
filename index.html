@@ -123,7 +123,7 @@
     <div id="top-bar">
     </div>
     <div id="actions-bar">
-        <div class="action-tab" id="new"><u>N</u>ew Tab</div>
+        <div class="action-tab" id="new">New <u>Tab</u></div>
         <div class="action-tab" id="delete"><u>Del</u>ete Current Tab</div>
         <div class="action-tab" id="export"><u>E</u>xport Tabs</div>
         <div class="action-tab" id="import"><u>I</u>mport Tabs</div>
@@ -171,11 +171,11 @@
             e.preventDefault();
             importButton.click();
         }
-        if (keybindCondition("n", { ctrlKey: true }, e)) {
+        if (keybindCondition("Tab", { ctrlKey: true }, e)) {
             e.preventDefault();
             newTabButton.click();
         }
-        if (keybindCondition("Delete", {}, e)) {
+        if (keybindCondition("Delete", { ctrlKey: true }, e)) {
             e.preventDefault();
             deleteButton.click();
         }
@@ -243,6 +243,12 @@
                 }
                 
                 let line = lines[lineIndex];
+
+                let chainer = line.lastIndexOf(" => ");
+
+                if(chainer != -1){
+                    line = line.substring(chainer + 4).trim();
+                }
 
                 let result = null;
 
