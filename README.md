@@ -20,6 +20,12 @@
         [Shift + Tab]
         Hello! this is text. ;[Highlight begin] 1 + 1 => 2[Highlight end]
         ```
+* `Shift + Ctrl + Tab` to highlight an entire line, regardless of semicolons
+    ```
+    Hello! this is text. ; 1 + 1 => 2
+    [Shift + Ctrl + Tab]
+    [Highlight begin]Hello! this is text. ; 1 + 1 => 2[Highlight end]
+    ```
 * `Left Click` a tab to select it
 * `Right Click` a tab to rename it
 * `Ctrl + E` to export tabs to a file

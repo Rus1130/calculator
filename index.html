@@ -147,6 +147,24 @@
 
     let tabCounter = 0;
 
+    const tabHistory = [];
+    /*
+    record history on name change, and on key up inside of a notepad
+
+        [
+            {
+                index: 1,
+                name: tab.textContent,
+                content: calcpadContent
+            },
+            {
+                index: 1,
+                name: tab.textContent,
+                content: calcpadContent
+            }
+        ]
+    */
+
     function sendToAllTabs(message){
         let iframes = document.querySelectorAll('iframe');
         iframes.forEach(iframe => {
@@ -301,6 +319,37 @@
                 range.setEnd(pad.firstChild, lineEnd);
                 selection.addRange(range);
 
+            } else if(keybindCondition("Tab", {shiftKey: true, ctrlKey: true}, e)) {
+                // highlight the whole current line, regardless of semicolons
+                e.preventDefault();
+                let selection = window.getSelection();
+                let start = selection.anchorOffset;
+                let lines = pad.textContent.substring(0, start).split(/\n/);
+                let lineIndex = 0;
+                let lineLength = 0;
+
+                for (let i = 0; i < lines.length; i++) {
+                    lineLength += lines[i].length + 1; // +1 for the newline character
+                    if (lineLength > start) {
+                        lineIndex = i;
+                        break;
+                    }
+                }
+
+                let line = lines[lineIndex];
+
+                let lineStart = pad.textContent.lastIndexOf("\n", start - 1) + 1;
+                let lineEnd = pad.textContent.indexOf("\n", start); // find the end of the line
+
+                if (lineEnd === -1) {
+                    lineEnd = pad.textContent.length; // if no newline found, set end to the end of the text
+                }
+
+                selection.removeAllRanges();
+                let range = document.createRange();
+                range.setStart(pad.firstChild, lineStart);
+                range.setEnd(pad.firstChild, lineEnd);
+                selection.addRange(range);
             }
         });
 
