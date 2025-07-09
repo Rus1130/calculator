@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const path = require('path');
 
 function createWindow () {
@@ -6,6 +6,19 @@ function createWindow () {
         width: 800,
         height: 600,
     });
+    
+    // const customMenu = Menu.buildFromTemplate([
+    //     {
+    //         label: 'Help',
+    //         submenu: [
+    //             {
+    //                 label: 'Documentation',
+    //                 accelerator: 'CmdOrCtrl+/',
+    //                 click: () => shell.openExternal('https://rus1130.github.io/projects/mdparser.html?url=https://rus1130.github.io/calculator/README.md')
+    //             },
+    //         ]
+    //     },
+    // ]);
 
     Menu.setApplicationMenu(null);
     win.loadFile('index.html');

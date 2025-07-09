@@ -244,10 +244,13 @@
                 
                 let line = lines[lineIndex];
 
-                let chainer = line.lastIndexOf(" => ");
+                let lastArrow = line.lastIndexOf(" => ");
+                let lastSemi = line.lastIndexOf(";");
+
+                let chainer = Math.max(lastArrow, lastSemi);
 
                 if(chainer != -1){
-                    line = line.substring(chainer + 4).trim();
+                    line = line.substring(chainer + (lastArrow != -1 ? 4 : 1)).trim();
                 }
 
                 let result = null;
@@ -282,7 +285,10 @@
 
                 let line = lines[lineIndex];
 
-                let lineStart = pad.textContent.lastIndexOf("\n", start - 1) + 1; // find the start of the line
+                let newlineIndex = pad.textContent.lastIndexOf("\n", start - 1);
+                let semicolonIndex = pad.textContent.lastIndexOf(";", start - 1);
+
+                let lineStart = Math.max(newlineIndex, semicolonIndex) + 1;
                 let lineEnd = pad.textContent.indexOf("\n", start); // find the end of the line
 
                 if (lineEnd === -1) {
