@@ -51,7 +51,7 @@ If the `[symbols]` section is omitted, you will not be able to evaluate mathmati
 
 ## Modification
 * `Ctrl + Delete` to delete the current selected tab
-* `Right Click` a tab to rename it
+* `Right Click` a tab to rename it, and then `Enter` to confirm the new name
 * `Ctrl + Tab` to create a new tab
 
 ## Other
