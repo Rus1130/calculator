@@ -57,3 +57,12 @@ x=2
 * `Ctrl + E` to export tabs to a file
 * `Ctrl + I` to import tabs from a file
 * `Ctrl + Z` to undo
+# Other
+This describes the features of the "other" menu:
+* `Current Theme` cycles between available themes
+* `Recover Edits` will download a .json file containing all undo history. It will be tedious to restore everything, but this is your punishment for accidentally deleting everything.
+* `Close` closes this menu
+## Danger Zone!
+* `Reset Tab Text` resets all text inside of each pad
+* `Clear Saved Tab Data` clears all saved tab data, including the current tab text
+* `Clear All Save Data` starts a 5 second countdown on click. If clicked again within this countdown, clears all saved data, including the current tab text, all saved tabs, and themes.

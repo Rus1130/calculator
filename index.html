@@ -1,4 +1,63 @@
 <style>
+    :root {
+        /* these variables are the ones that actually control the color */
+        --border: #ccc;
+        --top-bar-bg: #f0f0f0;
+        --actions-bar-bg: #f8f8f8;
+        --tab-bg: #e0e0e0;
+        --action-tab-bg: #e0e0e0;
+        --action-tab-hover: #d0d0d0;
+        --tab-active-primary: #d0d0d0;
+        --tab-active-secondary: #007bff;
+        --menu-bg: rgba(255, 255, 255, 0.8);
+        --menu-text-color: #000;
+        --menu-button-bg: #e0e0e0;
+        --menu-button-text-color: #000;
+        --menu-button-hover: #d0d0d0;
+        --tab-text-color: #000;
+        --action-tab-text-color: #000;
+        --note-bg: #fff;
+        --note-text-color: #000;
+
+        /* color is retrieved from these variables */
+        /* light theme */
+        --border-light: #ccc;
+        --top-bar-bg-light: #f0f0f0;
+        --actions-bar-bg-light: #f8f8f8;
+        --tab-bg-light: #e0e0e0;
+        --action-tab-bg-light: #e0e0e0;
+        --action-tab-hover-light: #d0d0d0;
+        --tab-active-primary-light: #d0d0d0;
+        --tab-active-secondary-light: #007bff;
+        --menu-bg-light: rgba(255, 255, 255, 0.8);
+        --menu-text-color-light: #000;
+        --menu-button-bg-light: #e0e0e0;
+        --menu-button-text-color-light: #000;
+        --menu-button-hover-light: #d0d0d0;
+        --tab-text-color-light: #000;
+        --action-tab-text-color-light: #000;
+        --note-bg-light: #fff;
+        --note-text-color-light: #000;
+
+        /* dark theme */
+        --border-dark: #444;
+        --top-bar-bg-dark: #333;
+        --actions-bar-bg-dark: #444;
+        --tab-bg-dark: #555;
+        --action-tab-bg-dark: #555;
+        --action-tab-hover-dark: #666;
+        --tab-active-primary-dark: #666;
+        --tab-active-secondary-dark: #00aaff;
+        --menu-bg-dark: rgba(50, 50, 50, 0.8);
+        --menu-text-color-dark: #fff;
+        --menu-button-bg-dark: #555;
+        --menu-button-text-color-dark: #fff;
+        --menu-button-hover-dark: #666;
+        --tab-text-color-dark: #fff;
+        --action-tab-text-color-dark: #fff;
+        --note-bg-dark: #222;
+        --note-text-color-dark: #fff;
+    }
     * {
         font-family: monospace;
     }
@@ -15,8 +74,8 @@
         left: 0;
         right: 0;
         height: 50px;
-        background-color: #f0f0f0;
-        border-bottom: 1px solid #ccc;
+        background-color: var(--top-bar-bg);
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
         padding: 0 10px;
@@ -25,6 +84,7 @@
         overflow-x: scroll;
         overflow-y: hidden;
         scrollbar-width: none;
+        color: var(--tab-text-color);
     }
 
     #actions-bar {
@@ -33,11 +93,12 @@
         left: 0;
         right: 0;
         height: 35px;
-        background-color: #f8f8f8;
-        border-bottom: 1px solid #ccc;
+        background-color: var(--actions-bar-bg);
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
         padding: 0 2.5px;
+        color: var(--action-tab-text-color);
     }
 
     #container {
@@ -48,6 +109,7 @@
         bottom: 0;
         box-sizing: border-box;
         padding: 10px;
+        background-color: var(--note-bg);
     }
 
     iframe {
@@ -59,8 +121,8 @@
     .tab {
         display: inline-block;
         padding: 10px;
-        background-color: #e0e0e0;
-        border: 1px solid #ccc;
+        background-color: var(--tab-bg);
+        border: 1px solid var(--border);
         margin-right: 5px;
         cursor: pointer;
         font-size: 16px;
@@ -70,8 +132,8 @@
 
     .action-tab {
         display: inline-block;
-        background-color: #e0e0e0;
-        border: 1px solid #ccc;
+        background-color: var(--action-tab-bg);
+        border: 1px solid var(--border);
         cursor: pointer;
         font-size: 14px;
         user-select: none;
@@ -82,12 +144,12 @@
     }
 
     .action-tab:hover {
-        background-color: #d0d0d0;
+        background-color: var(--action-tab-hover);
     }
 
     .selected {
-        background-color: #d0d0d0;
-        border-bottom: 2px solid #007bff;
+        background-color: var(--tab-active-primary);
+        border-bottom: 2px solid var(--tab-active-secondary);
     }
 
     .hidden {
@@ -101,6 +163,8 @@
         resize: none;
         outline: none;
         border: none;
+        background-color: var(--note-bg);
+        color: var(--note-text-color);
     }
 
     #loading-screen {
@@ -109,7 +173,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: var(--menu-bg);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -125,20 +189,21 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: var(--menu-bg);
         z-index: 1001;
         flex-direction: column;
     }
 
     .other-button {
-        background-color: #e0e0e0;
-        border: 1px solid #ccc;
+        background-color: var(--menu-button-bg);
+        border: 1px solid var(--border);
         cursor: pointer;
         padding: 2px;
         margin-top: 2px;
         user-select: none;
         text-align: center;
         width: 100%;
+        color: var(--menu-button-text-color);
     }
 
     .button-container {
@@ -150,7 +215,7 @@
     }
 
     .other-button:hover {
-        background-color: #d0d0d0;
+        background-color: var(--menu-button-hover);
     }
 </style>
 <head>
@@ -162,10 +227,15 @@
     </div>
     <div id="other-screen" style="display: none;">
         <div class="button-container">
-            <div style="user-select: none;">Other Options:</div>
-            <div class="other-button" id="other-clear-saved" onclick="clearSavedTabs()">Clear Saved Tabs</div>
-            <div class="other-button" id="clear-all-tabs" onclick="clearAllTabs()">Reset All Tabs</div>
+            <div style="user-select: none; color: var(--menu-text-color)">Other Options:</div>
+            <div class="other-button" id="other-change-theme" onclick="cycleTheme()">Current Theme: Light</div>
+            <div class="other-button" id="other-recover" onclick="recover()">Recover Edits</div>
             <div class="other-button" id="other-close" onclick="document.getElementById('other-screen').style.display = 'none'">Close</div>
+            <br>
+            <div style="user-select: none; color: var(--menu-text-color)">vv Danger Zone! vv</div>
+            <div class="other-button" id="clear-all-tabs" onclick="clearAllTabs()">Reset Tab Text</div>
+            <div class="other-button" id="other-clear-saved" onclick="clearSavedTabs()">Clear Saved Tab Data</div>
+            <div class="other-button" id="clear-all-save-data" onclick="clearAllSaveData()">Clear All Save Data</div>
         </div>
     </div>
     <div id="top-bar">
@@ -183,7 +253,6 @@
  
 <script>
     const { shell, ipcRenderer } = require('electron');
-    const fs = require('fs');
     
 
     let topBar = document.getElementById('top-bar');
@@ -198,14 +267,80 @@
 
     let otherClearSaved = document.getElementById('other-clear-saved');
     let otherClose = document.getElementById('other-close');
+    let otherChangeTheme = document.getElementById('other-change-theme');
+    let clearAllTabsButton = document.getElementById('clear-all-tabs');
+    let clearAllSaveDataButton = document.getElementById('clear-all-save-data');
 
     const loadingScreen = document.getElementById('loading-screen');
     const otherScreen = document.getElementById('other-screen');
 
     let tabCounter = 0;
 
+    let themeIndex = 0;
+
+    const Master_Undo_History = {};
+
+    const validThemeList = ['light', 'dark'];
+
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    themeIndex = validThemeList.indexOf(currentTheme);
+    changeTheme(currentTheme);
+
+    function changeTheme(name){
+        const root = getComputedStyle(document.documentElement)
+        let cssVars = {};
+
+        let themeVars = {};
+
+        for (let i = 0; i < root.length; i++) {
+            const prop = root[i];
+            if (prop.startsWith('--') && !validThemeList.some(theme => prop.endsWith(`-${theme}`))) {
+
+                cssVars[prop] = root.getPropertyValue(prop).trim();
+            }
+        }
+
+        for (let i = 0; i < root.length; i++) {
+            const prop = root[i];
+            if (prop.startsWith('--') && prop.endsWith(`-${name}`)) {
+
+                themeVars[prop] = root.getPropertyValue(prop).trim();
+            }
+        }
+
+
+        cssVars = Object.keys(cssVars)
+
+        cssVars.forEach((prop) => {
+            document.documentElement.style.setProperty(prop, themeVars[prop + '-' + name]);
+        });
+
+        document.getElementById('other-change-theme').textContent = `Current Theme: ${name.charAt(0).toUpperCase() + name.slice(1)}`;
+        currentTheme = name;
+    }
+
+
+    function cycleTheme() {
+        themeIndex = (themeIndex + 1) % validThemeList.length;
+        const newTheme = validThemeList[themeIndex];
+        changeTheme(newTheme);
+    }
+
     function openDocs() {
         shell.openExternal('https://rus1130.github.io/projects/mdparser.html?url=https://rus1130.github.io/calculator/README.md');
+    }
+
+    function recover(){
+        const data = JSON.stringify(Master_Undo_History, null, 4);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'recovery.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     function openOtherOptions() {
@@ -216,9 +351,56 @@
         localStorage.removeItem('tabs');
     }
 
+    let clearConfirmation1 = false;
+    let clearConfirmation2 = false;
+    let clearConfirmTimer = null;
+
+    function clearAllSaveData() {
+        const button = clearAllSaveDataButton;
+        let countdown = 50; // seconds
+
+        // If first confirmation not triggered yet
+        if (!clearConfirmation1) {
+            clearConfirmation1 = true;
+            button.textContent = `Are you sure? (${countdown}s)`;
+
+            clearConfirmTimer = setInterval(() => {
+                countdown -= 1;
+                if (countdown <= 0) {
+                    clearConfirmation1 = false;
+                    clearConfirmation2 = false;
+                    clearInterval(clearConfirmTimer);
+                    button.textContent = "Clear Save Data";
+                } else {
+                    button.textContent = `Are you sure? (${countdown/10}s)`;
+                }
+            }, 100);
+            return;
+        }
+
+        // If first confirmation was triggered and this is the second click
+        if (clearConfirmation1 && !clearConfirmation2) {
+            clearConfirmation2 = true;
+
+            clearInterval(clearConfirmTimer);
+            clearConfirmation1 = false;
+            clearConfirmation2 = false;
+
+            localStorage.removeItem('tabs');
+            localStorage.removeItem('theme');
+            clearAllTabs();
+            changeTheme('light');
+
+            button.textContent = "Cleared!";
+            setTimeout(() => {
+                button.textContent = "Clear Save Data";
+            }, 2000);
+        }
+    }
+
     topBar.addEventListener('wheel', function (e) {
         if (e.deltaY !== 0) {
-            this.scrollLeft += e.deltaY > 0 ? 12.5 : -12.5;
+            this.scrollLeft += e.deltaY > 0 ? 18 : -18;
             e.preventDefault(); // prevent vertical scroll
         }
     });
@@ -235,6 +417,7 @@
 
     ipcRenderer.on('app-before-quit', (event, message) => {
         localStorage.setItem('tabs', JSON.stringify(getTabsAsJson()));
+        localStorage.setItem('theme', currentTheme);
     });
 
     function restoreCaretOffset(pad, offset) {
@@ -495,7 +678,14 @@
             }
         });
 
+
+
         pad.addEventListener('keydown', function(e){
+
+            Master_Undo_History[pad.id].push({
+                content: pad.textContent,
+                name: document.querySelector('[data-tab="' + pad.id.split("-")[1] + '"]').textContent,
+            });
             if(keybindCondition("s", {ctrlKey: true}, e)){
                 e.preventDefault();
                 let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
@@ -649,9 +839,15 @@
         calcpad.id = `calcpad-${tabCounter}`;
         calcpad.classList.add('hidden');
 
+        if(Master_Undo_History[calcpad.id] == undefined){
+            Master_Undo_History[calcpad.id] = [];
+        }
+
         let tabs = document.querySelectorAll('.tab');
         tabs.forEach(t => t.classList.remove('selected'));
         newTab.classList.add('selected');
+
+        // scroll to the end of the top bar
 
         newTab.addEventListener('click', () => {
             let tabs = document.querySelectorAll('.tab');
@@ -664,7 +860,7 @@
 
             calcpad.style.display = 'block';
 
-            calcpad.focus()
+            if(newTab.contentEditable != 'plaintext-only') calcpad.focus()
 
             tabs.forEach(t => t.classList.remove('selected'));
             newTab.classList.add('selected');
@@ -674,7 +870,7 @@
             e.preventDefault();
             newTab.contentEditable = "plaintext-only";
             newTab.spellcheck = false;
-            newTab.style.outline = "1px solid #007bff";
+            newTab.style.outline = "1px solid var(--tab-active-secondary)";
             newTab.focus();
             // highlight the name with range
             let range = document.createRange();
@@ -703,6 +899,8 @@
         }
         container.appendChild(calcpad);
         newTab.click();
+
+        topBar.scrollLeft = 1000000000;
     }
 
     newTabButton.addEventListener('click', () => {
