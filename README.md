@@ -51,7 +51,7 @@ x=2
 ## Modification
 * `Ctrl + Delete` to delete the current selected tab
 * `Right Click` a tab to rename it
-* `Ctrl + Tab` to create a new tab (does not work in browser, app only)
+* `Ctrl + Tab` to create a new tab
 
 ## Other
 * `Ctrl + E` to export tabs to a file
