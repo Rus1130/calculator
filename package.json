@@ -19,7 +19,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "npx electron-builder"
+    "build": "npx electron-builder",
+    "compress": "compress.bat"
   },
   "build": {
     "appId": "calcpad.app",

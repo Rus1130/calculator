@@ -872,6 +872,7 @@
             newTab.contentEditable = "plaintext-only";
             newTab.spellcheck = false;
             newTab.style.outline = "1px solid var(--tab-active-secondary)";
+            newTab.style.cursor = "text";
             newTab.focus();
             // highlight the name with range
             let range = document.createRange();
@@ -886,6 +887,7 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 newTab.contentEditable = "false";
+                newTab.style.cursor = "pointer";
                 newTab.style.outline = "none";
                 calcpad.focus()
             }
