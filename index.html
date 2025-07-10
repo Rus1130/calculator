@@ -112,13 +112,58 @@
         align-items: center;
         z-index: 1000;
     }
+
+    #other-screen {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 1001;
+        flex-direction: column;
+    }
+
+    .other-button {
+        background-color: #e0e0e0;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        padding: 2px;
+        margin-top: 2px;
+        user-select: none;
+        text-align: center;
+        width: 100%;
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 200px;
+        gap: 2px;
+    }
+
+    .other-button:hover {
+        background-color: #d0d0d0;
+    }
 </style>
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.3/math.js"></script>
 </head>
 <body>
-    <div id="loading-screen">
+    <div id="loading-screen" style="display: none;">
         <h1>Loading...</h1>
+    </div>
+    <div id="other-screen" style="display: none;">
+        <div class="button-container">
+            <div>Other Options:</div>
+            <div class="other-button" id="other-clear-saved" onclick="clearSavedTabs()">Clear Saved Tabs</div>
+            <div class="other-button" id="clear-all-tabs" onclick="clearAllTabs()">Reset All Tabs</div>
+            <div class="other-button" id="other-close" onclick="document.getElementById('other-screen').style.display = 'none'">Close</div>
+        </div>
     </div>
     <div id="top-bar">
     </div>
@@ -128,12 +173,15 @@
         <div class="action-tab" id="export"><u>E</u>xport Tabs</div>
         <div class="action-tab" id="import"><u>I</u>mport Tabs</div>
         <div class="action-tab" id="docs" onclick="openDocs()">Documentation</div>
+        <div class="action-tab" id="other" onclick="openOtherOptions()">Other</div>
     </div>
     <div id="container"></div>
 </body>
  
 <script>
-    const { shell } = require('electron');
+    const { shell, ipcRenderer } = require('electron');
+    const fs = require('fs');
+    
 
     let topBar = document.getElementById('top-bar');
     let container = document.getElementById('container');
@@ -143,15 +191,42 @@
     let importButton = document.getElementById('import');
     let newTabButton = document.getElementById('new');
     let docsButton = document.getElementById('docs');
+    let otherButton = document.getElementById('other');
+
+    let otherClearSaved = document.getElementById('other-clear-saved');
+    let otherClose = document.getElementById('other-close');
 
     const loadingScreen = document.getElementById('loading-screen');
-    loadingScreen.style.display = 'none'; // Hide the loading screen after everything is loaded
+    const otherScreen = document.getElementById('other-screen');
 
     let tabCounter = 0;
 
     function openDocs() {
         shell.openExternal('https://rus1130.github.io/projects/mdparser.html?url=https://rus1130.github.io/calculator/README.md');
     }
+
+    function openOtherOptions() {
+        otherScreen.style.display = 'flex';
+    }
+
+    function clearSavedTabs() {
+        localStorage.removeItem('tabs');
+    }
+
+    function clearAllTabs() {
+        let tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
+            tab.remove();
+        });
+        tabCounter = 0;
+        createTabAndCalcpad();
+        otherScreen.style.display = 'none';
+    }
+
+    ipcRenderer.on('app-before-quit', (event, message) => {
+        localStorage.setItem('tabs', JSON.stringify(getTabsAsJson()));
+    });
 
     function restoreCaretOffset(pad, offset) {
         const sel = window.getSelection();
@@ -181,6 +256,90 @@
         }
 
         return charCount;
+    }
+
+    function getTabsAsJson(){
+        let tabs = Array.from(document.querySelectorAll('.tab'));
+
+        let exportData = tabs.map(tab => {
+
+            let calcpadElement = document.getElementById(`calcpad-${tab.getAttribute('data-tab')}`); 
+
+            let calcpadContent = calcpadElement.textContent;
+
+            return {
+                name: tab.textContent,
+                content: calcpadContent
+            };
+        });
+
+        return exportData;
+    }
+
+    if(localStorage.getItem('tabs')){
+        let tabData = JSON.parse(localStorage.getItem('tabs'));
+        loadingScreen.style.display = 'flex';
+        setTabsWithJson(tabData);
+    }
+
+    function setTabsWithJson(data){
+        setTimeout(() => {
+
+            let tabs = document.querySelectorAll('.tab');
+
+            // delete all tabs
+            tabs.forEach(tab => {
+                document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
+                tab.remove()
+            });
+
+            tabCounter = 0;
+
+            data.forEach(() => {
+                createTabAndCalcpad()
+            })
+
+            let newTabs = document.querySelectorAll('.tab');
+            newTabs.forEach((tab, index) => {
+                tab.textContent = data[index].name;
+                tab.setAttribute('data-tab', index + 1);
+
+
+                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+
+                if (index === 0) {
+                    tab.classList.add('selected');
+                    calcpadElement.classList.remove('hidden');
+                } else {
+                    calcpadElement.classList.add('hidden');
+                }
+            });
+
+            newTabs.forEach((tab, index) => {
+                tab.textContent = data[index].name;
+                tab.setAttribute('data-tab', index + 1);
+
+                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+
+                if (index === 0) {
+                    tab.classList.add('selected');
+                    calcpadElement.classList.remove('hidden');
+                } else {
+                    calcpadElement.classList.add('hidden');
+                }
+            });
+
+            setTimeout(() => {
+                newTabs.forEach((tab, index) => {
+                    let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+                    
+                    calcpadElement.textContent = data[index].content;
+                })
+                loadingScreen.style.display = 'none';
+            }, 200 * newTabs.length);
+
+            newTabs[0].click()
+        }, 500)
     }
 
     function setCaretPosition(element, offset) {
@@ -502,6 +661,7 @@
         newTab.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             newTab.contentEditable = "plaintext-only";
+            newTab.spellcheck = false;
             newTab.style.outline = "1px solid #007bff";
             newTab.focus();
             // highlight the name with range
@@ -555,21 +715,9 @@
     });
 
     exportButton.addEventListener('click', () => {
-        let tabs = Array.from(document.querySelectorAll('.tab'));
 
-        let exportData = tabs.map(tab => {
-            // let tabNumber = tab.getAttribute('data-tab');
+        let exportData = getTabsAsJson();
 
-            let calcpadElement = document.getElementById(`calcpad-${tab.getAttribute('data-tab')}`); 
-
-            let calcpadContent = calcpadElement.textContent;
-
-            return {
-                name: tab.textContent,
-                content: calcpadContent
-            };
-        });
-        
         let fileContent = JSON.stringify(exportData, null, 4);
         let blob = new Blob([fileContent], { type: "application/json" });
         let url = URL.createObjectURL(blob);
@@ -596,62 +744,8 @@
                     tabCounter = 0;
                     
                     // artifical delay
-                    setTimeout(() => {
-                        let data = JSON.parse(e.target.result);
-
-                        let tabs = document.querySelectorAll('.tab');
-
-                        // delete all tabs
-                        tabs.forEach(tab => {
-                            document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
-                            tab.remove()
-                        });
-
-                        data.forEach(() => {
-                            createTabAndCalcpad()
-                        })
-
-                        let newTabs = document.querySelectorAll('.tab');
-                        newTabs.forEach((tab, index) => {
-                            tab.textContent = data[index].name;
-                            tab.setAttribute('data-tab', index + 1);
-
-
-                            let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-
-                            if (index === 0) {
-                                tab.classList.add('selected');
-                                calcpadElement.classList.remove('hidden');
-                            } else {
-                                calcpadElement.classList.add('hidden');
-                            }
-                        });
-
-                        newTabs.forEach((tab, index) => {
-                            tab.textContent = data[index].name;
-                            tab.setAttribute('data-tab', index + 1);
-
-                            let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-
-                            if (index === 0) {
-                                tab.classList.add('selected');
-                                calcpadElement.classList.remove('hidden');
-                            } else {
-                                calcpadElement.classList.add('hidden');
-                            }
-                        });
-
-                        setTimeout(() => {
-                            newTabs.forEach((tab, index) => {
-                                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-                                
-                                calcpadElement.textContent = data[index].content;
-                            })
-                            loadingScreen.style.display = 'none';
-                        }, 200 * newTabs.length);
-
-                        newTabs[0].click()
-                    }, 500)
+                    let data = JSON.parse(e.target.result);
+                    setTabsWithJson(data);
                     
                 };
                 reader.readAsText(file);

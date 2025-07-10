@@ -1,19 +1,24 @@
-const { app, BrowserWindow, shell, contextBridge, Menu } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
+const path = require('node:path');
 
 function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        title: "Calcpad v.1.1.1",
+        title: "Calcpad v.1.2.0",
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
         }
     });
 
     Menu.setApplicationMenu(null);
     win.loadFile('index.html');
     // win.webContents.openDevTools({ mode: 'detach' });
+    
+    win.on('close', (e) => {
+        win.webContents.send('app-before-quit');
+    });
 }
 
 app.whenReady().then(() => {
