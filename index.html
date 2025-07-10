@@ -58,6 +58,7 @@
         --note-bg-dark: #222;
         --note-text-color-dark: #fff;
     }
+
     * {
         font-family: monospace;
     }
@@ -74,7 +75,7 @@
         left: 0;
         right: 0;
         height: 50px;
-        background-color: var(--top-bar-bg);
+        background: var(--top-bar-bg);
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
@@ -93,7 +94,7 @@
         left: 0;
         right: 0;
         height: 35px;
-        background-color: var(--actions-bar-bg);
+        background: var(--actions-bar-bg);
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
@@ -103,13 +104,13 @@
 
     #container {
         position: absolute;
-        top: 85px;
+        top: 86px;
         left: 0;
         right: 0;
         bottom: 0;
         box-sizing: border-box;
         padding: 10px;
-        background-color: var(--note-bg);
+        background: var(--note-bg);
     }
 
     iframe {
@@ -121,7 +122,7 @@
     .tab {
         display: inline-block;
         padding: 10px;
-        background-color: var(--tab-bg);
+        background: var(--tab-bg);
         border: 1px solid var(--border);
         margin-right: 5px;
         cursor: pointer;
@@ -132,7 +133,7 @@
 
     .action-tab {
         display: inline-block;
-        background-color: var(--action-tab-bg);
+        background: var(--action-tab-bg);
         border: 1px solid var(--border);
         cursor: pointer;
         font-size: 14px;
@@ -144,11 +145,11 @@
     }
 
     .action-tab:hover {
-        background-color: var(--action-tab-hover);
+        background: var(--action-tab-hover);
     }
 
     .selected {
-        background-color: var(--tab-active-primary);
+        background: var(--tab-active-primary);
         border-bottom: 2px solid var(--tab-active-secondary);
     }
 
@@ -163,7 +164,7 @@
         resize: none;
         outline: none;
         border: none;
-        background-color: var(--note-bg);
+        background: var(--note-bg);
         color: var(--note-text-color);
     }
 
@@ -173,7 +174,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: var(--menu-bg);
+        background: var(--menu-bg);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -189,13 +190,13 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: var(--menu-bg);
+        background: var(--menu-bg);
         z-index: 1001;
         flex-direction: column;
     }
 
     .other-button {
-        background-color: var(--menu-button-bg);
+        background: var(--menu-button-bg);
         border: 1px solid var(--border);
         cursor: pointer;
         padding: 2px;
@@ -215,7 +216,7 @@
     }
 
     .other-button:hover {
-        background-color: var(--menu-button-hover);
+        background: var(--menu-button-hover);
     }
 </style>
 <head>
@@ -457,11 +458,9 @@
 
             let calcpadElement = document.getElementById(`calcpad-${tab.getAttribute('data-tab')}`); 
 
-            let calcpadContent = calcpadElement.textContent;
-
             return {
                 name: tab.textContent,
-                content: calcpadContent
+                content: calcpadElement.textContent
             };
         });
 
@@ -681,11 +680,11 @@
 
 
         pad.addEventListener('keydown', function(e){
-
             Master_Undo_History[pad.id].push({
                 content: pad.textContent,
                 name: document.querySelector('[data-tab="' + pad.id.split("-")[1] + '"]').textContent,
             });
+
             if(keybindCondition("s", {ctrlKey: true}, e)){
                 e.preventDefault();
                 let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
@@ -709,6 +708,7 @@
                     setCaretPosition(pad, lastCaretPositionForSymbols);
                 }
             }
+            
             if(keybindCondition("z", {ctrlKey: true}, e)){
                 e.preventDefault();
                 
@@ -753,8 +753,9 @@
                 let selection = window.getSelection();
                 let start = selection.anchorOffset;
 
-                let line = getCurrentLine(pad);
-
+                // get all text before the cursor
+                let line = pad.textContent.substring(0, start).split("\n").pop();
+                
                 let lastArrow = line.lastIndexOf(" => ");
                 let lastSemi = line.lastIndexOf(";");
 

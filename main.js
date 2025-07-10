@@ -5,7 +5,8 @@ function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        title: "Calcpad v.1.3.0",
+        title: "Calcpad v.1.3.1",
+        icon: path.join(__dirname, 'icon.png'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
