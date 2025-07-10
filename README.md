@@ -42,7 +42,7 @@ x + 1 => 3
 [symbols]
 x=2
 ``` 
-If the `[symbols]` section is omitted, you will not be able to evaluate mathmatical expressions entirely.
+If the `[symbols]` section is omitted, you will not be able to evaluate mathmatical expressions.
 
 ## Navigation
 * `Left Click` a tab to select it
