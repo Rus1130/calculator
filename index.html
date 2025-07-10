@@ -22,7 +22,9 @@
         padding: 0 10px;
         z-index: 100;
         width: 100%;
-        overflow-x: auto;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none;
     }
 
     #actions-bar {
@@ -63,6 +65,7 @@
         cursor: pointer;
         font-size: 16px;
         user-select: none;
+        white-space: nowrap;
     }
 
     .action-tab {
@@ -159,7 +162,7 @@
     </div>
     <div id="other-screen" style="display: none;">
         <div class="button-container">
-            <div>Other Options:</div>
+            <div style="user-select: none;">Other Options:</div>
             <div class="other-button" id="other-clear-saved" onclick="clearSavedTabs()">Clear Saved Tabs</div>
             <div class="other-button" id="clear-all-tabs" onclick="clearAllTabs()">Reset All Tabs</div>
             <div class="other-button" id="other-close" onclick="document.getElementById('other-screen').style.display = 'none'">Close</div>
@@ -212,6 +215,13 @@
     function clearSavedTabs() {
         localStorage.removeItem('tabs');
     }
+
+    topBar.addEventListener('wheel', function (e) {
+        if (e.deltaY !== 0) {
+            this.scrollLeft += e.deltaY > 0 ? 12.5 : -12.5;
+            e.preventDefault(); // prevent vertical scroll
+        }
+    });
 
     function clearAllTabs() {
         let tabs = document.querySelectorAll('.tab');
@@ -283,63 +293,60 @@
     }
 
     function setTabsWithJson(data){
+        let tabs = document.querySelectorAll('.tab');
+
+        // delete all tabs
+        tabs.forEach(tab => {
+            document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
+            tab.remove()
+        });
+
+        tabCounter = 0;
+
+        data.forEach(() => {
+            createTabAndCalcpad()
+        })
+
+        let newTabs = document.querySelectorAll('.tab');
+        newTabs.forEach((tab, index) => {
+            tab.textContent = data[index].name;
+            tab.setAttribute('data-tab', index + 1);
+
+
+            let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+
+            if (index === 0) {
+                tab.classList.add('selected');
+                calcpadElement.classList.remove('hidden');
+            } else {
+                calcpadElement.classList.add('hidden');
+            }
+        });
+
+        newTabs.forEach((tab, index) => {
+            tab.textContent = data[index].name;
+            tab.setAttribute('data-tab', index + 1);
+
+            let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+
+            if (index === 0) {
+                tab.classList.add('selected');
+                calcpadElement.classList.remove('hidden');
+            } else {
+                calcpadElement.classList.add('hidden');
+            }
+        });
+
         setTimeout(() => {
-
-            let tabs = document.querySelectorAll('.tab');
-
-            // delete all tabs
-            tabs.forEach(tab => {
-                document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
-                tab.remove()
-            });
-
-            tabCounter = 0;
-
-            data.forEach(() => {
-                createTabAndCalcpad()
+            newTabs.forEach((tab, index) => {
+                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
+                
+                calcpadElement.textContent = data[index].content;
             })
+            loadingScreen.style.display = 'none';
+        }, 50 * newTabs.length);
 
-            let newTabs = document.querySelectorAll('.tab');
-            newTabs.forEach((tab, index) => {
-                tab.textContent = data[index].name;
-                tab.setAttribute('data-tab', index + 1);
-
-
-                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-
-                if (index === 0) {
-                    tab.classList.add('selected');
-                    calcpadElement.classList.remove('hidden');
-                } else {
-                    calcpadElement.classList.add('hidden');
-                }
-            });
-
-            newTabs.forEach((tab, index) => {
-                tab.textContent = data[index].name;
-                tab.setAttribute('data-tab', index + 1);
-
-                let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-
-                if (index === 0) {
-                    tab.classList.add('selected');
-                    calcpadElement.classList.remove('hidden');
-                } else {
-                    calcpadElement.classList.add('hidden');
-                }
-            });
-
-            setTimeout(() => {
-                newTabs.forEach((tab, index) => {
-                    let calcpadElement = document.getElementById(`calcpad-${index + 1}`);
-                    
-                    calcpadElement.textContent = data[index].content;
-                })
-                loadingScreen.style.display = 'none';
-            }, 200 * newTabs.length);
-
-            newTabs[0].click()
-        }, 500)
+        newTabs[0].click()
     }
 
     function setCaretPosition(element, offset) {
@@ -492,15 +499,21 @@
         pad.addEventListener('keydown', function(e){
             if(keybindCondition("s", {ctrlKey: true}, e)){
                 e.preventDefault();
+                let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
+
+                if(symbolsPosition == -1) return;
+
                 if(!inSymbols){
-                    let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
-                    let lines = pad.textContent.substring(symbolsPosition + 9).split("\n");
-                    let emptyLineIndex = lines.findIndex(line => line.trim() === "");
-                    if(emptyLineIndex === -1) {
-                        pad.textContent += "\n";
-                        emptyLineIndex = lines.length;
+                    let lines = pad.textContent.split("\n");
+
+                    let newCaretPosition = 0;
+                    for(let i = 0; i < lines.length; i++){
+                        if(i < lines.length - 1) {
+                            newCaretPosition += lines[i].length + 1; // +1 for the newline character
+                        } else {
+                            newCaretPosition += lines[i].length; // no newline character for the last line
+                        }
                     }
-                    let newCaretPosition = symbolsPosition + 9 + emptyLineIndex + 1;
 
                     setCaretPosition(pad, newCaretPosition);
                 } else {
@@ -755,5 +768,5 @@
         fileInput.click();
     });
 
-    createTabAndCalcpad(); // Create the first tab and notepad on load
+    if(!localStorage.getItem('tabs')) createTabAndCalcpad(); // Create the first tab and notepad on load
 </script>
