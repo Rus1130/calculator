@@ -10,7 +10,7 @@ function createWindow () {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-        }
+        },
     });
 
     Menu.setApplicationMenu(null);

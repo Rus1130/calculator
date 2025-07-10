@@ -23,8 +23,13 @@
     "compress": "compress.bat"
   },
   "build": {
+    "asar": false,
     "appId": "calcpad.app",
     "productName": "calcpad",
+    "files": [
+      "!compress.bat",
+      "!dist.7z"
+    ],
     "win": {
       "target": [
         {
