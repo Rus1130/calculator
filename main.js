@@ -5,7 +5,7 @@ function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        title: "Calcpad v.1.2.1",
+        title: "Calcpad v.1.3.0",
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
