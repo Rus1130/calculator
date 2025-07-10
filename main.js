@@ -14,7 +14,7 @@ function createWindow () {
 
     Menu.setApplicationMenu(null);
     win.loadFile('index.html');
-    win.webContents.openDevTools({ mode: 'detach' });
+    // win.webContents.openDevTools({ mode: 'detach' });
     
     win.on('close', (e) => {
         win.webContents.send('app-before-quit');
