@@ -60,7 +60,7 @@ x=2
 # Other
 This describes the features of the "other" menu:
 * `Current Theme` cycles between available themes
-* `Recover Edits` will download a .json file containing all undo history. It will be tedious to restore everything, but this is your punishment for accidentally deleting everything.
+* `Recover Edits` will download a .json file containing this session's undo history. It will be tedious to restore everything, but this is your punishment for accidentally deleting everything.
 * `Close` closes this menu
 ## Danger Zone!
 * `Reset Tab Text` resets all text inside of each pad
