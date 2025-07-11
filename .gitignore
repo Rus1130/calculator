@@ -2,5 +2,5 @@ node_modules/**
 dist/**
 out/
 dist.7z
-dist.7z.temp
+dist.7z.tmp
 compress.bat
