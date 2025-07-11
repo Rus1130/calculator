@@ -285,22 +285,6 @@
             <div>Note Background: <span class="color-edit" data-var="note-bg" contenteditable="plaintext-only">#fff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
             <div>Note Text Color: <span class="color-edit" data-var="note-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
             <button onclick="exportTheme()">Export (Copies to Clipboard)</button>
-            <!-- <div>Top Bar Background: <span class="color-edit" data-var="top-bar-bg">#f0f0f0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Actions Bar Background: <span class="color-edit" data-var="actions-bar-bg">#f8f8f8</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Background: <span class="color-edit" data-var="tab-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Background: <span class="color-edit" data-var="action-tab-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Hover: <span class="color-edit" data-var="action-tab-hover">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Active Primary: <span class="color-edit" data-var="tab-active-primary">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Active Secondary: <span class="color-edit" data-var="tab-active-secondary">#007bff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Background: <span class="color-edit" data-var="menu-bg">rgba(255, 255, 255, 0.8)</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Text Color: <span class="color-edit" data-var="menu-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Background: <span class="color-edit" data-var="menu-button-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Text Color: <span class="color-edit" data-var="menu-button-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Hover: <span class="color-edit" data-var="menu-button-hover">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Text Color: <span class="color-edit" data-var="tab-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Text Color: <span class="color-edit" data-var="action-tab-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Note Background: <span class="color-edit" data-var="note-bg">#fff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Note Text Color: <span class="color-edit" data-var="note-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div> -->
         </div>
         <div id="preview">
             <div id="loading-screen" style="display: none;">
@@ -357,7 +341,7 @@
     colorEditElements.forEach(el => {
         variableName = el.getAttribute('data-var');
         let colorPreviewElement = el.nextElementSibling;
-        colorPreviewElement.style.backgroundColor = el.textContent;
+        colorPreviewElement.style.background = el.textContent;
 
         el.addEventListener('input', (e) => {
             const sel = window.getSelection();
@@ -379,7 +363,7 @@
 
             let colorPreviewElement = el.nextElementSibling;
 
-            colorPreviewElement.style.backgroundColor = newColor;
+            colorPreviewElement.style.background = newColor;
             document.documentElement.style.setProperty(`--${variableName}`, newColor);
         });
     })
