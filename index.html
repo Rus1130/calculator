@@ -79,13 +79,20 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
-        padding: 0 10px;
+        padding: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-right: 5px;
         z-index: 100;
         width: 100%;
         overflow-x: scroll;
         overflow-y: hidden;
         scrollbar-width: none;
         color: var(--tab-text-color);
+    }
+
+    #top-bar .tab:last-of-type {
+        margin-right: 10px;
     }
 
     #actions-bar {
@@ -99,6 +106,9 @@
         display: flex;
         align-items: center;
         padding: 0 2.5px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none;
         color: var(--action-tab-text-color);
     }
 
@@ -142,6 +152,7 @@
         height: 25px;
         line-height: 25px;
         margin-right: 5px;
+        white-space: nowrap;
     }
 
     .action-tab:hover {
@@ -239,8 +250,7 @@
             <div class="other-button" id="clear-all-save-data" onclick="clearAllSaveData()">Clear All Save Data</div>
         </div>
     </div>
-    <div id="top-bar">
-    </div>
+    <div id="top-bar"></div>
     <div id="actions-bar">
         <div class="action-tab" id="new">New <u>Tab</u></div>
         <div class="action-tab" id="delete"><u>Del</u>ete Current Tab</div>
@@ -257,6 +267,7 @@
     
 
     let topBar = document.getElementById('top-bar');
+    let actionsBar = document.getElementById('actions-bar');
     let container = document.getElementById('container');
 
     let deleteButton = document.getElementById('delete');
@@ -389,7 +400,7 @@
 
             localStorage.removeItem('tabs');
             localStorage.removeItem('theme');
-            clearAllTabs();
+            deleteAllTabsAndPads();
             changeTheme('light');
 
             button.textContent = "Cleared!";
@@ -406,7 +417,16 @@
         }
     });
 
-    function clearAllTabs() {
+    actionsBar.addEventListener('wheel', function (e) {
+        if (e.deltaY !== 0) {
+            this.scrollLeft += e.deltaY > 0 ? 18 : -18;
+            e.preventDefault(); // prevent vertical scroll
+        }
+    });
+
+    const DEFAULT_TEXT = `\n\n\n\n\n\n\n\n\n\n[symbols]\n\n`;
+
+    function deleteAllTabsAndPads() {
         let tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
             document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).remove();
@@ -415,6 +435,16 @@
         tabCounter = 0;
         createTabAndCalcpad();
     }
+
+    function clearAllTabs() {
+        let tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).textContent = DEFAULT_TEXT;
+        });
+    }
+
+
+
 
     ipcRenderer.on('app-before-quit', (event, message) => {
         localStorage.setItem('tabs', JSON.stringify(getTabsAsJson()));
@@ -644,7 +674,7 @@
         let pad = document.createElement('div');
         pad.contentEditable = "plaintext-only";
         pad.spellcheck = false;
-        pad.textContent = `\n\n\n\n\n\n\n\n\n\n[symbols]\n\n`
+        pad.textContent = DEFAULT_TEXT;
 
         pad.classList.add('note');
 
