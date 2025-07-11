@@ -1,0 +1,796 @@
+<style>
+    :root {
+        /* these variables are the ones that actually control the color */
+        --border: #ccc;
+        --top-bar-bg: #f0f0f0;
+        --actions-bar-bg: #f8f8f8;
+        --tab-bg: #e0e0e0;
+        --action-tab-bg: #e0e0e0;
+        --action-tab-hover: #d0d0d0;
+        --tab-active-primary: #d0d0d0;
+        --tab-active-secondary: #007bff;
+        --menu-bg: rgba(255, 255, 255, 0.8);
+        --menu-text-color: #000;
+        --menu-button-bg: #e0e0e0;
+        --menu-button-text-color: #000;
+        --menu-button-hover: #d0d0d0;
+        --tab-text-color: #000;
+        --action-tab-text-color: #000;
+        --note-bg: #fff;
+        --note-text-color: #000;
+
+        /* color is retrieved from these variables */
+        /* light theme */
+        --border-light: #ccc;
+        --top-bar-bg-light: #f0f0f0;
+        --actions-bar-bg-light: #f8f8f8;
+        --tab-bg-light: #e0e0e0;
+        --action-tab-bg-light: #e0e0e0;
+        --action-tab-hover-light: #d0d0d0;
+        --tab-active-primary-light: #d0d0d0;
+        --tab-active-secondary-light: #007bff;
+        --menu-bg-light: rgba(255, 255, 255, 0.8);
+        --menu-text-color-light: #000;
+        --menu-button-bg-light: #e0e0e0;
+        --menu-button-text-color-light: #000;
+        --menu-button-hover-light: #d0d0d0;
+        --tab-text-color-light: #000;
+        --action-tab-text-color-light: #000;
+        --note-bg-light: #fff;
+        --note-text-color-light: #000;
+
+        /* dark theme */
+        --border-dark: #444;
+        --top-bar-bg-dark: #333;
+        --actions-bar-bg-dark: #444;
+        --tab-bg-dark: #555;
+        --action-tab-bg-dark: #555;
+        --action-tab-hover-dark: #666;
+        --tab-active-primary-dark: #666;
+        --tab-active-secondary-dark: #00aaff;
+        --menu-bg-dark: rgba(50, 50, 50, 0.8);
+        --menu-text-color-dark: #fff;
+        --menu-button-bg-dark: #555;
+        --menu-button-text-color-dark: #fff;
+        --menu-button-hover-dark: #666;
+        --tab-text-color-dark: #fff;
+        --action-tab-text-color-dark: #fff;
+        --note-bg-dark: #222;
+        --note-text-color-dark: #fff;
+    }
+
+    * {
+        font-family: monospace;
+    }
+    
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    #top-bar {
+        position: fixed;
+        top: 0;
+        left: 400px;
+        right: 0;
+        height: 50px;
+        background: var(--top-bar-bg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-right: 5px;
+        z-index: 100;
+        width: 100%;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        color: var(--tab-text-color);
+    }
+
+    #top-bar .tab:last-of-type {
+        margin-right: 10px;
+    }
+
+    #actions-bar {
+        position: fixed;
+        top: 50px;
+        left: 400px;
+        right: 0;
+        height: 35px;
+        background: var(--actions-bar-bg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 2.5px;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        color: var(--action-tab-text-color);
+    }
+
+    #container {
+        position: absolute;
+        top: 86px;
+        left: 400px;
+        right: 0;
+        bottom: 0;
+        box-sizing: border-box;
+        padding: 10px;
+        background: var(--note-bg);
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .tab {
+        display: inline-block;
+        padding: 10px;
+        background: var(--tab-bg);
+        border: 1px solid var(--border);
+        margin-right: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .action-tab {
+        display: inline-block;
+        background: var(--action-tab-bg);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        font-size: 14px;
+        user-select: none;
+        padding: 0 5px;
+        height: 25px;
+        line-height: 25px;
+        margin-right: 5px;
+        white-space: nowrap;
+    }
+
+    .action-tab:hover {
+        background: var(--action-tab-hover);
+    }
+
+    .selected {
+        background: var(--tab-active-primary);
+        border-bottom: 2px solid var(--tab-active-secondary);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .note {
+        font-family: monospace;
+        width: 100%;
+        height: 100%;
+        resize: none;
+        outline: none;
+        border: none;
+        background: var(--note-bg);
+        color: var(--note-text-color);
+    }
+
+    #other-screen {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--menu-bg);
+        z-index: 1001;
+        flex-direction: column;
+    }
+
+    .other-button {
+        background: var(--menu-button-bg);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        padding: 2px;
+        margin-top: 2px;
+        user-select: none;
+        text-align: center;
+        width: 100%;
+        color: var(--menu-button-text-color);
+    }
+
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 200px;
+        gap: 2px;
+    }
+
+    .other-button:hover {
+        background: var(--menu-button-hover);
+    }
+
+    #window-container {
+        display: grid;
+        grid-template-columns: 400px auto;
+        width: 100%;
+        height: 100%;
+    }
+
+    #preview {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #theme-creator {
+        padding: 5px;
+        border-right: 2px solid black;
+    }
+
+    #theme-creator span {
+        display: inline;
+    }
+
+    #theme-creator div {
+        margin-top: 5px;
+    }
+
+    .color-edit {
+        border: 1px solid black;
+        min-width: 16px;
+    }
+
+    .color-edit:focus {
+        border: 1px solid black;
+        outline: none;
+    }
+
+    .color-preview {
+        height: 20px;
+        width: 20px;
+        border: 1px solid black;
+        margin-left: 5px;
+        user-select: none;
+    }
+</style>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.3/math.js"></script>
+</head>
+<body>
+    <div id="window-container">
+        <div id="theme-creator">
+            <div>Border: <span class="color-edit" data-var="border" contenteditable="plaintext-only">#ccc</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Top Bar Background: <span class="color-edit" data-var="top-bar-bg" contenteditable="plaintext-only">#f0f0f0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Actions Bar Background: <span class="color-edit" data-var="actions-bar-bg" contenteditable="plaintext-only">#f8f8f8</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Background: <span class="color-edit" data-var="tab-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Background: <span class="color-edit" data-var="action-tab-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Hover: <span class="color-edit" data-var="action-tab-hover" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Active Primary: <span class="color-edit" data-var="tab-active-primary" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Active Secondary: <span class="color-edit" data-var="tab-active-secondary" contenteditable="plaintext-only">#007bff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Background: <span class="color-edit" data-var="menu-bg" contenteditable="plaintext-only">rgba(255, 255, 255, 0.8)</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Text Color: <span class="color-edit" data-var="menu-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Background: <span class="color-edit" data-var="menu-button-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Text Color: <span class="color-edit" data-var="menu-button-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Hover: <span class="color-edit" data-var="menu-button-hover" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Text Color: <span class="color-edit" data-var="tab-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Text Color: <span class="color-edit" data-var="action-tab-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Note Background: <span class="color-edit" data-var="note-bg" contenteditable="plaintext-only">#fff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Note Text Color: <span class="color-edit" data-var="note-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <button onclick="exportTheme()">Export</button>
+            <!-- <div>Top Bar Background: <span class="color-edit" data-var="top-bar-bg">#f0f0f0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Actions Bar Background: <span class="color-edit" data-var="actions-bar-bg">#f8f8f8</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Background: <span class="color-edit" data-var="tab-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Background: <span class="color-edit" data-var="action-tab-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Hover: <span class="color-edit" data-var="action-tab-hover">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Active Primary: <span class="color-edit" data-var="tab-active-primary">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Active Secondary: <span class="color-edit" data-var="tab-active-secondary">#007bff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Background: <span class="color-edit" data-var="menu-bg">rgba(255, 255, 255, 0.8)</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Text Color: <span class="color-edit" data-var="menu-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Background: <span class="color-edit" data-var="menu-button-bg">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Text Color: <span class="color-edit" data-var="menu-button-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Menu Button Hover: <span class="color-edit" data-var="menu-button-hover">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Tab Text Color: <span class="color-edit" data-var="tab-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Action Tab Text Color: <span class="color-edit" data-var="action-tab-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Note Background: <span class="color-edit" data-var="note-bg">#fff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div>Note Text Color: <span class="color-edit" data-var="note-text-color">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div> -->
+        </div>
+        <div id="preview">
+            <div id="loading-screen" style="display: none;">
+                <h1>Loading...</h1>
+            </div>
+            <div id="other-screen" style="display: none;">
+                <div class="button-container">
+                    <div style="user-select: none; color: var(--menu-text-color)">Other Options:</div>
+                    <div class="other-button" id="other-change-theme">Current Theme: Light</div>
+                    <div class="other-button" id="other-recover">Recover Edits</div>
+                    <div class="other-button" id="other-close" onclick="document.getElementById('other-screen').style.display = 'none'">Close</div>
+                    <br>
+                    <div style="user-select: none; color: var(--menu-text-color)">vv Danger Zone! vv</div>
+                    <div class="other-button" id="clear-all-tabs">Reset All Tab Text</div>
+                    <div class="other-button" id="other-clear-saved">Clear Saved Tab Data</div>
+                    <div class="other-button" id="clear-all-save-data" >Clear All Save Data</div>
+                </div>
+            </div>
+            <div id="top-bar"><div class="tab selected" data-tab="1">Tab 1</div><div class="tab" data-tab="2">Tab 2</div></div>
+            <div id="actions-bar">
+                <div class="action-tab" id="new">New <u>Tab</u></div>
+                <div class="action-tab" id="delete"><u>Del</u>ete Current Tab</div>
+                <div class="action-tab" id="export"><u>E</u>xport Tabs</div>
+                <div class="action-tab" id="import"><u>I</u>mport Tabs</div>
+                <div class="action-tab" id="docs">Documentation</div>
+                <div class="action-tab" id="other" onclick="openOtherOptions()">Other</div>
+            </div>
+            <div id="container">
+                <div contenteditable="plaintext-only" spellcheck="false" class="note hidden" id="calcpad-1" style="display: block"></div>
+                <div spellcheck="false" class="note hidden" id="calcpad-2" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+ 
+<script>
+
+    let colorEditElements = document.querySelectorAll('.color-edit');
+
+    function exportTheme(){
+        let result = '';
+        colorEditElements.forEach(el => {
+            let variableName = el.getAttribute('data-var');
+            let colorValue = el.textContent.trim();
+            result += `--${variableName}: ${colorValue};\n`;
+        });
+
+        if(confirm(result)){
+            navigator.clipboard.writeText(result)
+        }
+    }
+
+    colorEditElements.forEach(el => {
+        variableName = el.getAttribute('data-var');
+        let colorPreviewElement = el.nextElementSibling;
+        colorPreviewElement.style.backgroundColor = el.textContent;
+
+        el.addEventListener('input', (e) => {
+            const sel = window.getSelection();
+            const caretPos = sel.focusOffset;
+
+            el.textContent = el.textContent.replace(/\n/g, '');
+
+            const textNode = el.firstChild;
+            const range = document.createRange();
+            const pos = Math.min(caretPos, textNode.length);
+            range.setStart(textNode, pos);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+
+
+            let variableName = el.getAttribute('data-var');
+            let newColor = el.textContent.trim();
+
+            let colorPreviewElement = el.nextElementSibling;
+
+            colorPreviewElement.style.backgroundColor = newColor;
+            document.documentElement.style.setProperty(`--${variableName}`, newColor);
+        });
+    })
+
+
+    document.getElementById('loading-screen').style.display = 'none';
+    let topBar = document.getElementById('top-bar');
+    let actionsBar = document.getElementById('actions-bar');
+    let container = document.getElementById('container');
+
+    let deleteButton = document.getElementById('delete');
+    let exportButton = document.getElementById('export');
+    let importButton = document.getElementById('import');
+    let newTabButton = document.getElementById('new');
+    let docsButton = document.getElementById('docs');
+    let otherButton = document.getElementById('other');
+
+    let otherClearSaved = document.getElementById('other-clear-saved');
+    let otherClose = document.getElementById('other-close');
+    let otherChangeTheme = document.getElementById('other-change-theme');
+    let clearAllTabsButton = document.getElementById('clear-all-tabs');
+    let clearAllSaveDataButton = document.getElementById('clear-all-save-data');
+
+    const loadingScreen = document.getElementById('loading-screen');
+    const otherScreen = document.getElementById('other-screen');
+
+    let tabCounter = 0;
+
+    const Master_Undo_History = {};
+
+    function openOtherOptions() {
+        otherScreen.style.display = 'flex';
+    }
+
+    topBar.addEventListener('wheel', function (e) {
+        if (e.deltaY !== 0) {
+            this.scrollLeft += e.deltaY > 0 ? 18 : -18;
+            e.preventDefault(); // prevent vertical scroll
+        }
+    });
+
+    actionsBar.addEventListener('wheel', function (e) {
+        if (e.deltaY !== 0) {
+            this.scrollLeft += e.deltaY > 0 ? 18 : -18;
+            e.preventDefault(); // prevent vertical scroll
+        }
+    });
+
+    const DEFAULT_TEXT = `\n\n\n\n\n\n\n\n\n\n[symbols]\n\n`;
+
+    function restoreCaretOffset(pad, offset) {
+        const sel = window.getSelection();
+        const textLength = pad.textContent.length;
+        const safeOffset = Math.min(offset, textLength);
+
+        const textNode = pad.firstChild;
+        if (textNode) {
+            sel.removeAllRanges();
+            const range = document.createRange();
+            range.setStart(textNode, safeOffset);
+            range.collapse(true);
+            sel.addRange(range);
+        }
+    }
+
+    function getCaretCharacterOffsetWithin(element) {
+        const selection = window.getSelection();
+        let charCount = -1;
+
+        if (selection.anchorNode && element.contains(selection.anchorNode)) {
+            const range = selection.getRangeAt(0);
+            const preRange = range.cloneRange();
+            preRange.selectNodeContents(element);
+            preRange.setEnd(range.endContainer, range.endOffset);
+            charCount = preRange.toString().length;
+        }
+
+        return charCount;
+    }
+
+    function setCaretPosition(element, offset) {
+        let node = element.firstChild;
+        let charsLeft = offset;
+
+        // Walk through the node tree to find the right spot
+        function findNode(node) {
+            while (node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (charsLeft <= node.textContent.length) {
+                        return { node, offset: charsLeft };
+                    } else {
+                        charsLeft -= node.textContent.length;
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const result = findNode(node.firstChild);
+                    if (result) return result;
+                }
+                node = node.nextSibling;
+            }
+            return null;
+        }
+
+        const result = findNode(node);
+        if (result) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(result.node, result.offset);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+
+    function keybindCondition(key, meta = { shiftKey: false, ctrlKey: false, altKey: false }, e){
+        meta.shiftKey = meta.shiftKey || false;
+        meta.ctrlKey = meta.ctrlKey || false;
+        meta.altKey = meta.altKey || false;
+
+        return e.key == key && e.shiftKey == meta.shiftKey && e.ctrlKey == meta.ctrlKey && e.altKey == meta.altKey;
+    }
+
+    function getLines(pad){
+        let selection = window.getSelection();
+        let start = selection.anchorOffset;
+        let lines = pad.textContent.substring(0, start).split(/\n/);
+
+        return lines;
+    }
+
+    function getCurrentLine(pad){
+        let selection = window.getSelection();
+        let start = selection.anchorOffset;
+        let lines = getLines(pad);
+
+        let lineIndex = 0;
+        let lineLength = 0;
+        for (let i = 0; i < lines.length; i++) {
+            lineLength += lines[i].length + 1; // +1 for the newline character
+            if (lineLength > start) {
+                lineIndex = i;
+                break;
+            }
+        }
+        
+        let line = lines[lineIndex];
+        return line
+    }
+
+    function createCalcpad(){
+        let pad = document.createElement('div');
+        pad.contentEditable = "plaintext-only";
+        pad.spellcheck = false;
+        pad.textContent = DEFAULT_TEXT;
+
+        pad.classList.add('note');
+
+        let scope = {};
+
+        let contentStack = [pad.textContent];
+        let caretStack = [getCaretCharacterOffsetWithin(pad)];
+
+        let lastCaretPositionForSymbols = 0;
+
+        let inSymbols = false;
+
+        document.addEventListener("selectionchange", (e) => {
+            let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
+            let caretPosition = getCaretCharacterOffsetWithin(pad);
+
+            if(symbolsPosition == -1){
+                inSymbols = false;
+                return;
+            }
+
+            if(caretPosition > (symbolsPosition + 9)){
+                inSymbols = true;
+            } else {
+                inSymbols = false;
+            }
+
+            if(inSymbols == false){
+                lastCaretPositionForSymbols = caretPosition
+            }
+        });
+
+
+
+        pad.addEventListener('keydown', function(e){
+            Master_Undo_History[pad.id].push({
+                content: pad.textContent,
+                name: document.querySelector('[data-tab="' + pad.id.split("-")[1] + '"]').textContent,
+            });
+
+            if(keybindCondition("s", {ctrlKey: true}, e)){
+                e.preventDefault();
+                let symbolsPosition = pad.textContent.lastIndexOf("[symbols]");
+
+                if(symbolsPosition == -1) return;
+
+                if(!inSymbols){
+                    let lines = pad.textContent.split("\n");
+
+                    let newCaretPosition = 0;
+                    for(let i = 0; i < lines.length; i++){
+                        if(i < lines.length - 1) {
+                            newCaretPosition += lines[i].length + 1; // +1 for the newline character
+                        } else {
+                            newCaretPosition += lines[i].length; // no newline character for the last line
+                        }
+                    }
+
+                    setCaretPosition(pad, newCaretPosition);
+                } else {
+                    setCaretPosition(pad, lastCaretPositionForSymbols);
+                }
+            }
+            
+            if(keybindCondition("z", {ctrlKey: true}, e)){
+                e.preventDefault();
+                
+                contentStack.pop();
+                caretStack.pop();
+
+                let lastContent = contentStack[contentStack.length - 1];
+                let lastCaretOffset = caretStack[caretStack.length - 1];
+
+                if(lastContent != undefined){
+                    pad.textContent = lastContent;
+                    setCaretPosition(pad, lastCaretOffset);
+                }
+            }
+
+            contentStack.push(pad.textContent);
+            caretStack.push(getCaretCharacterOffsetWithin(pad));
+
+            contentStack = [...new Set(contentStack)];
+            caretStack = [...new Set(caretStack)];
+        })
+
+        pad.addEventListener('keyup', function(e){
+            if(keybindCondition("z", {ctrlKey: true}, e)){
+                e.preventDefault();
+            }
+        })
+
+        pad.addEventListener('keydown', function(e) {
+            if(keybindCondition("Tab", {shiftKey: false}, e)) {
+                // symbol getting
+                scope = pad.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n").reduce((acc, line) => {
+                    let [key, value] = line.split('=').map(s => s.trim());
+                    if (key && value) {
+                        acc[key] = parseFloat(value);
+                    }
+                    return acc;
+                }, {});
+
+                // actual calculation
+                e.preventDefault();
+                let selection = window.getSelection();
+                let start = selection.anchorOffset;
+
+                // get all text before the cursor
+                let line = pad.textContent.substring(0, start).split("\n").pop();
+                
+                let lastArrow = line.lastIndexOf(" => ");
+                let lastSemi = line.lastIndexOf(";");
+
+                let chainer = Math.max(lastArrow, lastSemi);
+
+                if(chainer != -1){
+                    line = line.substring(chainer + (lastArrow != -1 ? 4 : 1)).trim();
+                }
+
+                let result = null;
+
+                try {
+                    result = math.evaluate(line, scope);
+                } catch (e) {
+                    result = "ERR! " + e.message;
+                }
+
+                if(result != undefined){
+                    pad.textContent = pad.textContent.substring(0, start) + " => " + result + pad.textContent.substring(start);
+
+                    selection.collapse(pad.firstChild, start + 4 + result.toString().length);
+                }
+            } else if(keybindCondition("Tab", {shiftKey: true}, e)) {
+                // highlight the whole current line
+                e.preventDefault();
+                let selection = window.getSelection();
+                let start = selection.anchorOffset;
+
+                let line = getCurrentLine(pad);
+
+                let newlineIndex = pad.textContent.lastIndexOf("\n", start - 1);
+                let semicolonIndex = pad.textContent.lastIndexOf(";", start - 1);
+
+                let lineStart = Math.max(newlineIndex, semicolonIndex) + 1;
+                let lineEnd = pad.textContent.indexOf("\n", start); // find the end of the line
+
+                if (lineEnd === -1) {
+                    lineEnd = pad.textContent.length; // if no newline found, set end to the end of the text
+                }
+
+                selection.removeAllRanges();
+                let range = document.createRange();
+                range.setStart(pad.firstChild, lineStart);
+                range.setEnd(pad.firstChild, lineEnd);
+                selection.addRange(range);
+
+            } else if(keybindCondition("Tab", {shiftKey: true, ctrlKey: true}, e)) {
+                // highlight the whole current line, regardless of semicolons
+                e.preventDefault();
+                let selection = window.getSelection();
+                let start = selection.anchorOffset;
+
+                let line = getCurrentLine(pad);
+
+                let lineStart = pad.textContent.lastIndexOf("\n", start - 1) + 1;
+                let lineEnd = pad.textContent.indexOf("\n", start); // find the end of the line
+
+                if (lineEnd === -1) {
+                    lineEnd = pad.textContent.length; // if no newline found, set end to the end of the text
+                }
+
+                selection.removeAllRanges();
+                let range = document.createRange();
+                range.setStart(pad.firstChild, lineStart);
+                range.setEnd(pad.firstChild, lineEnd);
+                selection.addRange(range);
+            }
+        });
+
+        return pad;
+    }
+
+    function createTabAndCalcpad(){
+        tabCounter++;
+
+        let newTab = document.createElement('div');
+        newTab.classList.add('tab');
+        newTab.textContent = `Tab ${tabCounter}`;
+        newTab.setAttribute('data-tab', tabCounter);
+
+        let calcpad = createCalcpad();
+        calcpad.id = `calcpad-${tabCounter}`;
+        calcpad.classList.add('hidden');
+
+        if(Master_Undo_History[calcpad.id] == undefined){
+            Master_Undo_History[calcpad.id] = [];
+        }
+
+        let tabs = document.querySelectorAll('.tab');
+        tabs.forEach(t => t.classList.remove('selected'));
+        newTab.classList.add('selected');
+
+        // scroll to the end of the top bar
+
+        newTab.addEventListener('click', () => {
+            let tabs = document.querySelectorAll('.tab');
+
+            tabs.forEach(t => {
+                document.getElementById(`calcpad-${t.getAttribute('data-tab')}`).style.display = 'none';
+            });
+
+            let calcpad = document.getElementById(`calcpad-${newTab.getAttribute('data-tab')}`);
+
+            calcpad.style.display = 'block';
+
+            if(newTab.contentEditable != 'plaintext-only') calcpad.focus()
+
+            tabs.forEach(t => t.classList.remove('selected'));
+            newTab.classList.add('selected');
+        });
+
+        newTab.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            newTab.contentEditable = "plaintext-only";
+            newTab.spellcheck = false;
+            newTab.style.outline = "1px solid var(--tab-active-secondary)";
+            newTab.style.cursor = "text";
+            newTab.focus();
+            // highlight the name with range
+            let range = document.createRange();
+            let selection = window.getSelection();
+            range.selectNodeContents(newTab);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        });
+
+        newTab.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                newTab.contentEditable = "false";
+                newTab.style.cursor = "pointer";
+                newTab.style.outline = "none";
+                calcpad.focus()
+            }
+        });
+
+        // find the active tab if there is one, otherwise append
+        let activeTab = document.querySelector('.tab.selected');
+        if (activeTab) {
+            activeTab.insertAdjacentElement('afterend', newTab);
+        } else {
+            topBar.appendChild(newTab);
+        }
+        container.appendChild(calcpad);
+        newTab.click();
+
+        topBar.scrollLeft = 1000000000;
+    }
+</script>
