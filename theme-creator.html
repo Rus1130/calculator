@@ -38,25 +38,6 @@
         --action-tab-text-color-light: #000;
         --note-bg-light: #fff;
         --note-text-color-light: #000;
-
-        /* dark theme */
-        --border-dark: #444;
-        --top-bar-bg-dark: #333;
-        --actions-bar-bg-dark: #444;
-        --tab-bg-dark: #555;
-        --action-tab-bg-dark: #555;
-        --action-tab-hover-dark: #666;
-        --tab-active-primary-dark: #666;
-        --tab-active-secondary-dark: #00aaff;
-        --menu-bg-dark: rgba(50, 50, 50, 0.8);
-        --menu-text-color-dark: #fff;
-        --menu-button-bg-dark: #555;
-        --menu-button-text-color-dark: #fff;
-        --menu-button-hover-dark: #666;
-        --tab-text-color-dark: #fff;
-        --action-tab-text-color-dark: #fff;
-        --note-bg-dark: #222;
-        --note-text-color-dark: #fff;
     }
 
     * {
@@ -240,7 +221,9 @@
     }
 
     #theme-creator div {
-        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        user-select: none;
     }
 
     .color-edit {
@@ -248,42 +231,35 @@
         min-width: 16px;
     }
 
-    .color-edit:focus {
-        border: 1px solid black;
-        outline: none;
-    }
-
-    .color-preview {
-        height: 20px;
-        width: 20px;
-        border: 1px solid black;
-        margin-left: 5px;
-        user-select: none;
+    .line {
+        padding: 5px;
     }
 </style>
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.5.3/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
 </head>
 <body>
     <div id="window-container">
         <div id="theme-creator">
-            <div>Border: <span class="color-edit" data-var="border" contenteditable="plaintext-only">#ccc</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Top Bar Background: <span class="color-edit" data-var="top-bar-bg" contenteditable="plaintext-only">#f0f0f0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Actions Bar Background: <span class="color-edit" data-var="actions-bar-bg" contenteditable="plaintext-only">#f8f8f8</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Background: <span class="color-edit" data-var="tab-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Background: <span class="color-edit" data-var="action-tab-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Hover: <span class="color-edit" data-var="action-tab-hover" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Active Primary: <span class="color-edit" data-var="tab-active-primary" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Active Secondary: <span class="color-edit" data-var="tab-active-secondary" contenteditable="plaintext-only">#007bff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Background: <span class="color-edit" data-var="menu-bg" contenteditable="plaintext-only">rgba(255, 255, 255, 0.8)</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Text Color: <span class="color-edit" data-var="menu-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Background: <span class="color-edit" data-var="menu-button-bg" contenteditable="plaintext-only">#e0e0e0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Text Color: <span class="color-edit" data-var="menu-button-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Menu Button Hover: <span class="color-edit" data-var="menu-button-hover" contenteditable="plaintext-only">#d0d0d0</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Tab Text Color: <span class="color-edit" data-var="tab-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Action Tab Text Color: <span class="color-edit" data-var="action-tab-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Note Background: <span class="color-edit" data-var="note-bg" contenteditable="plaintext-only">#fff</span><span class="color-preview">&nbsp;&nbsp;</span></div>
-            <div>Note Text Color: <span class="color-edit" data-var="note-text-color" contenteditable="plaintext-only">#000</span><span class="color-preview">&nbsp;&nbsp;</span></div>
+            <div class="line">Border:&nbsp;<div class='color-edit' data-var="border"><div class='picker'></div></div></div>
+            <div class="line">Top Bar Background:&nbsp;<div class='color-edit' data-var="top-bar-bg"><div class='picker'></div></div></div>
+            <div class="line">Actions Bar Background:&nbsp;<div class='color-edit' data-var="actions-bar-bg"><div class='picker'></div></div></div>
+            <div class="line">Tab Background:&nbsp;<div class='color-edit' data-var="tab-bg"><div class='picker'></div></div></div>
+            <div class="line">Action Tab Background:&nbsp;<div class='color-edit' data-var="action-tab-bg"><div class='picker'></div></div></div>
+            <div class="line">Action Tab Hover:&nbsp;<div class='color-edit' data-var="action-tab-hover"><div class='picker'></div></div></div>
+            <div class="line">Tab Active Primary:&nbsp;<div class='color-edit' data-var="tab-active-primary"><div class='picker'></div></div></div>
+            <div class="line">Tab Active Secondary:&nbsp;<div class='color-edit' data-var="tab-active-secondary"><div class='picker'></div></div></div>
+            <div class="line">Menu Background:&nbsp;<div class='color-edit' data-var="menu-bg"><div class='picker'></div></div></div>
+            <div class="line">Menu Text Color:&nbsp;<div class='color-edit' data-var="menu-text-color"><div class='picker'></div></div></div>
+            <div class="line">Menu Button Background:&nbsp;<div class='color-edit' data-var="menu-button-bg"><div class='picker'></div></div></div>
+            <div class="line">Menu Button Text Color:&nbsp;<div class='color-edit' data-var="menu-button-text-color"><div class='picker'></div></div></div>
+            <div class="line">Menu Button Hover:&nbsp;<div class='color-edit' data-var="menu-button-hover"><div class='picker'></div></div></div>
+            <div class="line">Tab Text Color:&nbsp;<div class='color-edit' data-var="tab-text-color"><div class='picker'></div></div></div>
+            <div class="line">Action Tab Text Color:&nbsp;<div class='color-edit' data-var="action-tab-text-color"><div class='picker'></div></div></div>
+            <div class="line">Note Background:&nbsp;<div class='color-edit' data-var="note-bg"><div class='picker'></div></div></div>
+            <div class="line">Note Text Color:&nbsp;<div class='color-edit' data-var="note-text-color"><div class='picker'></div></div></div>
             <button onclick="exportTheme()">Export (Copies to Clipboard)</button>
         </div>
         <div id="preview">
@@ -323,50 +299,52 @@
  
 <script>
 
-    let colorEditElements = document.querySelectorAll('.color-edit');
+    let colorEditElements = document.querySelectorAll('.picker');
+    let pickers = [];
+
+    colorEditElements.forEach(el => {
+        let picker = Pickr.create({
+            el: el,
+            theme: 'classic',
+            default: getComputedStyle(document.documentElement).getPropertyValue(`--${el.parentElement.getAttribute('data-var')}`).trim(),
+            swatches: [], // no swatches
+            components: {
+                preview: true,
+                opacity: true,
+                hue: true,
+                interaction: {
+                    hex: true,
+                    input: true,
+                }
+            }
+        });
+
+        pickers.push(picker)
+
+        picker.on('change', (color, instance) => {
+            if (color) {
+                picker.applyColor();
+
+                let hex = color.toHEXA().toString();
+                let variableName = picker._root.root.parentElement.getAttribute('data-var');
+
+                document.documentElement.style.setProperty(`--${variableName}`, hex);
+            }
+        });
+    })
+
 
     function exportTheme(){
         let result = '';
-        colorEditElements.forEach(el => {
-            let variableName = el.getAttribute('data-var');
-            let colorValue = el.textContent.trim();
-            result += `--${variableName}: ${colorValue};\n`;
+        pickers.forEach(picker => {
+            let variableName = picker._root.root.parentElement.getAttribute('data-var');
+            result += `--${variableName}: ${picker._lastColor.toHEXA().toString()};\n`;
         });
 
         if(confirm(result)){
             navigator.clipboard.writeText(result)
         }
     }
-
-    colorEditElements.forEach(el => {
-        variableName = el.getAttribute('data-var');
-        let colorPreviewElement = el.nextElementSibling;
-        colorPreviewElement.style.background = el.textContent;
-
-        el.addEventListener('input', (e) => {
-            const sel = window.getSelection();
-            const caretPos = sel.focusOffset;
-
-            el.textContent = el.textContent.replace(/\n/g, '');
-
-            const textNode = el.firstChild;
-            const range = document.createRange();
-            const pos = Math.min(caretPos, textNode.length);
-            range.setStart(textNode, pos);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
-
-
-            let variableName = el.getAttribute('data-var');
-            let newColor = el.textContent.trim();
-
-            let colorPreviewElement = el.nextElementSibling;
-
-            colorPreviewElement.style.background = newColor;
-            document.documentElement.style.setProperty(`--${variableName}`, newColor);
-        });
-    })
 
 
     document.getElementById('loading-screen').style.display = 'none';
