@@ -14,6 +14,13 @@ You can chain tabs together on the same line:
 ```
 <br>
 
+You can also convert units:
+```
+1 m to cm [Tab]
+1 m to cm => 100 cm
+```
+<br>
+
 Type a semicolon to allow math to be evaluated on the same line as text:
 ```
 hello! this is text. ; 1 + 1 => 2
