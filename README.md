@@ -46,6 +46,7 @@ Hello! this is text. ; 1 + 1 => 2
 Define variables below `[symbols]`:
 ```
 x + 1 => 3
+
 [symbols]
 x=2
 ``` 
