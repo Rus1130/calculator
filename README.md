@@ -43,14 +43,14 @@ Hello! this is text. ; 1 + 1 => 2
 ```
 <br>
 
-Define variables below `[symbols]`:
+### Symbols
+Define variables below `[symbols]`. If this section is omitted, you will not be able to evaluate mathematical expressions:
 ```
 x + 1 => 3
 
 [symbols]
-x=2
+x = 2
 ``` 
-If the `[symbols]` section is omitted, you will not be able to evaluate mathmatical expressions.
 <br>
 
 You can also define functions inside of the `[symbols]` section:
