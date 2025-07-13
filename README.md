@@ -50,6 +50,15 @@ x + 1 => 3
 x=2
 ``` 
 If the `[symbols]` section is omitted, you will not be able to evaluate mathmatical expressions.
+<br>
+
+You can also define functions inside of the `[symbols]` section:
+```
+f(3) => 9
+
+[symbols]
+f(x) = x^2
+```
 
 ## Navigation
 * `Left Click` a tab to select it

@@ -57,6 +57,25 @@
         --action-tab-text-color-dark: #fff;
         --note-bg-dark: #222;
         --note-text-color-dark: #fff;
+
+        /* galaxy */
+        --border-galaxy: #5a3e7b;
+        --top-bar-bg-galaxy: #2e1534;
+        --actions-bar-bg-galaxy: #3a1f4c;
+        --tab-bg-galaxy: #4b2e60;
+        --action-tab-bg-galaxy: #4b2e60;
+        --action-tab-hover-galaxy: #6d3e88;
+        --tab-active-primary-galaxy: #6a0dad;
+        --tab-active-secondary-galaxy: #00ffff;
+        --menu-bg-galaxy: rgba(46, 21, 52, 0.9);
+        --menu-text-color-galaxy: #f8f8ff;
+        --menu-button-bg-galaxy: #5a3e7b;
+        --menu-button-text-color-galaxy: #ffffff;
+        --menu-button-hover-galaxy: #7a4cb6;
+        --tab-text-color-galaxy: #f0e6ff;
+        --action-tab-text-color-galaxy: #e0d2ff;
+        --note-bg-galaxy: #1e0f26;
+        --note-text-color-galaxy: #e3d7ff;
     }
 
     * {
@@ -292,7 +311,7 @@
 
     const Master_Undo_History = {};
 
-    const validThemeList = ['light', 'dark'];
+    const validThemeList = ['light', 'dark', "galaxy"];
 
     let currentTheme = localStorage.getItem('theme') || 'light';
     themeIndex = validThemeList.indexOf(currentTheme);
@@ -369,7 +388,7 @@
 
     function clearAllSaveData() {
         const button = clearAllSaveDataButton;
-        let countdown = 50; // 1 decisecond
+        let countdown = 50; // 5 seconds in 100ms intervals
 
         // If first confirmation not triggered yet
         if (!clearConfirmation1) {
@@ -442,8 +461,6 @@
             document.querySelector(`#calcpad-${tab.getAttribute('data-tab')}`).textContent = DEFAULT_TEXT;
         });
     }
-
-
 
 
     ipcRenderer.on('app-before-quit', (event, message) => {
@@ -769,19 +786,30 @@
 
         pad.addEventListener('keydown', function(e) {
             if(keybindCondition("Tab", {shiftKey: false}, e)) {
-                // symbol getting
-                scope = pad.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n").reduce((acc, line) => {
-                    let [key, value] = line.split('=').map(s => s.trim());
-                    if (key && value) {
-                        acc[key] = parseFloat(value);
-                    }
-                    return acc;
-                }, {});
-
-                // actual calculation
                 e.preventDefault();
                 let selection = window.getSelection();
                 let start = selection.anchorOffset;
+
+                function appendToCurrentLine(text){
+                    pad.textContent = pad.textContent.substring(0, start) + text + pad.textContent.substring(start);
+                    selection.collapse(pad.firstChild, start + text.length);
+                }
+
+                const parser = math.parser();
+
+                let symbolLines = pad.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n");
+
+                const variableRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*[^=]+$/
+                const functionRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\(([a-zA-Z0-9_,\s]*)\)\s*=\s*.+$/
+
+                symbolLines.forEach(line => {
+                    if(!variableRegex.test(line) && !functionRegex.test(line) && line.trim() != ""){
+                        appendToCurrentLine(" => ERR! Invalid symbol definition: " + line);
+                        return;
+                    }
+
+                    parser.evaluate(line)
+                })
 
                 // get all text before the cursor
                 let line = pad.textContent.substring(0, start).split("\n").pop();
@@ -798,15 +826,15 @@
                 let result = null;
 
                 try {
-                    result = math.evaluate(line, scope);
+                    result = parser.evaluate(line);
                 } catch (e) {
                     result = "ERR! " + e.message;
                 }
 
-                if(result != undefined){
-                    pad.textContent = pad.textContent.substring(0, start) + " => " + result + pad.textContent.substring(start);
-
-                    selection.collapse(pad.firstChild, start + 4 + result.toString().length);
+                if(typeof result === 'function'){
+                    appendToCurrentLine(" => ERR! Cannot define functions outisde of [symbols] section");
+                } else if(result != undefined){
+                    appendToCurrentLine(" => " + result);
                 }
             } else if(keybindCondition("Tab", {shiftKey: true}, e)) {
                 // highlight the whole current line
