@@ -44,7 +44,7 @@ Hello! this is text. ; 1 + 1 => 2
 <br>
 
 ### Symbols
-Define variables below `[symbols]`. If this section is omitted, you will not be able to evaluate mathematical expressions:
+Define variables below `[symbols]`. If this section is omitted, you will not be able to evaluate mathematical expressions.
 ```
 x + 1 => 3
 
@@ -53,7 +53,7 @@ x = 2
 ``` 
 <br>
 
-You can also define functions inside of the `[symbols]` section:
+You can also define functions:
 ```
 f(3) => 9
 
