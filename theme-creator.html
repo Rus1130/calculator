@@ -234,6 +234,14 @@
     .line {
         padding: 5px;
     }
+
+    textarea {
+        resize: none;
+    }
+
+    textarea:focus {
+        outline: none;
+    }
 </style>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/>
@@ -260,6 +268,7 @@
             <div class="line">Action Tab Text Color:&nbsp;<div class='color-edit' data-var="action-tab-text-color"><div class='picker'></div></div></div>
             <div class="line">Note Background:&nbsp;<div class='color-edit' data-var="note-bg"><div class='picker'></div></div></div>
             <div class="line">Note Text Color:&nbsp;<div class='color-edit' data-var="note-text-color"><div class='picker'></div></div></div>
+            <div class="line">Theme name: <textarea rows="1" id="name" spellcheck="false">my-theme</textarea></div>
             <button onclick="exportTheme()">Export (Copies to Clipboard)</button>
         </div>
         <div id="preview">
@@ -299,6 +308,20 @@
  
 <script>
 
+    const nameTextarea = document.getElementById('name');
+    nameTextarea.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    nameTextarea.addEventListener('input', () => {
+        let pos = nameTextarea.selectionStart;
+
+        nameTextarea.value = nameTextarea.value.replace(/ /g, '-');
+        nameTextarea.setSelectionRange(pos, pos);
+    });
+
     let colorEditElements = document.querySelectorAll('.picker');
     let pickers = [];
 
@@ -336,9 +359,10 @@
 
     function exportTheme(){
         let result = '';
+        let themeName = nameTextarea.value.trim() || 'my-theme';
         pickers.forEach(picker => {
             let variableName = picker._root.root.parentElement.getAttribute('data-var');
-            result += `--${variableName}: ${picker._lastColor.toHEXA().toString()};\n`;
+            result += `--${variableName}-${themeName}: ${picker._lastColor.toHEXA().toString()};\n`;
         });
 
         if(confirm(result)){
