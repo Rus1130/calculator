@@ -89,7 +89,7 @@
     }
 
     #top-bar {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -115,7 +115,7 @@
     }
 
     #actions-bar {
-        position: fixed;
+        position: absolute;
         top: 50px;
         left: 0;
         right: 0;
@@ -139,13 +139,12 @@
         bottom: 0;
         box-sizing: border-box;
         padding: 10px;
+        padding-bottom: 5px;
         background: var(--note-bg);
     }
 
-    iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
+    body {
+        overflow: hidden;
     }
 
     .tab {
@@ -191,6 +190,7 @@
         font-family: monospace;
         width: 100%;
         height: 100%;
+        overflow-y: auto;
         resize: none;
         outline: none;
         border: none;
@@ -305,6 +305,9 @@
     const loadingScreen = document.getElementById('loading-screen');
     const otherScreen = document.getElementById('other-screen');
 
+    const variableRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*[^=]+$/
+    const functionRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\(([a-zA-Z0-9_,\s]*)\)\s*=\s*.+$/
+
     let tabCounter = 0;
 
     let themeIndex = 0;
@@ -316,6 +319,102 @@
     let currentTheme = localStorage.getItem('theme') || 'light';
     themeIndex = validThemeList.indexOf(currentTheme);
     changeTheme(currentTheme);
+
+
+    math.import({
+        format: function(x){
+            return x.toLocaleString();
+        },
+        for: function(init, eq, n, index){
+            if(!variableRegex.test(init)) throw new Error("Invalid variable definition: " + init + ". Is the initialization a string?");
+
+            let variable = init.split('=')[0].trim();
+            let value = init.split('=')[1].trim();
+            if(value > n) throw new Error(`Initialization value cannot be greater than loop count`);
+
+            let result = [];
+            for(let i = value; i <= n; i++){
+                let scope = {};
+                scope[variable] = i;
+                try {
+                    result.push(math.evaluate(eq, scope));
+                } catch (e) {
+                    result.push("ERR! " + e.message);
+                }
+            }
+
+            if(index != undefined) {
+                let res = result[index-1];
+                if(res == undefined) throw new Error(`Index ${index} is out of bounds.`);
+                else return res;
+            } else return result;
+        },
+        simplify: function(expr) {
+            try {
+                return math.simplify(expr).toString();
+            } catch (e) {
+                throw new Error("Invalid expression: " + expr + ". " + e.message);
+            }
+        },
+        timeformat: function(time){
+            function timeformat(input) {
+                const timeUnitsInMinutes = {
+                    second: 1 / 60,
+                    minute: 1,
+                    hour: 60,
+                    day: 1440,
+                    week: 10080,
+                    month: 43800, // average month: 30.4167 days
+                    year: 525600  // average year: 365 days
+                };
+
+                const regex = /(\d+(?:\.\d+)?)\s*(seconds?|minutes?|hours?|days?|weeks?|months?|years?)/gi;
+                let totalMinutes = 0;
+
+                for (const match of input.matchAll(regex)) {
+                    let value = parseFloat(match[1]);
+                    let unitRaw = match[2].toLowerCase();
+                    let unit = unitRaw.replace(/s$/, ''); // singular form
+
+                    if (timeUnitsInMinutes[unit]) {
+                        totalMinutes += value * timeUnitsInMinutes[unit];
+                    }
+                }
+
+                // Convert total minutes into larger units
+                const units = [
+                    ["year", 525600],
+                    ["month", 43800],
+                    ["week", 10080],
+                    ["day", 1440],
+                    ["hour", 60],
+                    ["minute", 1],
+                ];
+
+                let result = [];
+
+                for (const [name, size] of units) {
+                    const amount = Math.floor(totalMinutes / size);
+                    if (amount > 0) {
+                        result.push(`${amount} ${name}${amount !== 1 ? "s" : ""}`);
+                        totalMinutes %= size;
+                    }
+                }
+
+                return result.length ? result.join(", ") : "0 minutes";
+            }
+
+            if (typeof time !== 'string') {
+                throw new Error("Invalid time format. Expected a string.");
+            }
+
+            time = time.trim();
+            return timeformat(time);
+        }
+    }, {
+        override: true,
+        silent: false,
+    })
 
     function changeTheme(name){
         const root = getComputedStyle(document.documentElement)
@@ -467,6 +566,10 @@
         localStorage.setItem('tabs', JSON.stringify(getTabsAsJson()));
         localStorage.setItem('theme', currentTheme);
     });
+
+    ipcRenderer.on('debug', () => {
+        alert("DEBUG IS ENABLED!")
+    })
 
     function restoreCaretOffset(pad, offset) {
         const sel = window.getSelection();
@@ -798,9 +901,6 @@
                 const parser = math.parser();
 
                 let symbolLines = pad.textContent.match(/\[symbols\](.*)$/s)[1].trim().split("\n");
-
-                const variableRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*[^=]+$/
-                const functionRegex = /^\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\(([a-zA-Z0-9_,\s]*)\)\s*=\s*.+$/
 
                 symbolLines.forEach(line => {
                     if(!variableRegex.test(line) && !functionRegex.test(line) && line.trim() != ""){

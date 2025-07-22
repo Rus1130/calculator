@@ -43,7 +43,7 @@ Hello! this is text. ; 1 + 1 => 2
 ```
 <br>
 
-### Symbols
+### Symbols & Functions
 Define variables below `[symbols]`. If this section is omitted, you will not be able to evaluate mathematical expressions.
 ```
 x + 1 => 3
@@ -60,7 +60,31 @@ f(3) => 9
 [symbols]
 f(x) = x^2
 ```
+#### Built-in Functions
+You can use built-in functions like `sin`, `cos`, `tan`, `log`, etc.
+##### format(x<Number\>)
+This function formats numbers to a locale-specific string, which is useful for displaying results in a more readable format.
+```
+format(1234567.89) => 1,234,567.89
+```
+##### for(init<String\>, eq<String\>, n<Number\>, index<Number\>)
+This function allows you to iterate over a range of numbers. It is useful for creating loops in your calculations.
+```
+init = initial value
+eq = equation to evaluate
+n = times to iterate
+index = if undefined, returns all indexes, otherwise returns the value at that index. Starts at 1.
 
+for("x=1", "x^2", 10) => 1,4,9,16,25,36,49,64,81,100
+for("x=1", "x^2", 10, 5) => 25
+```
+##### timeformat(time<String\>)
+This function formats a time string into a more readable format.
+```
+timeformat("375 minutes") => 6 hours, 15 minutes
+timeformat("2 hours 90 minutes") => 3 hours, 30 minutes
+timeformat("76 hours") => 3 days, 4 hours
+```
 ## Navigation
 * `Left Click` a tab to select it
 * `Ctrl + Left/Right Arrow` to cycle tabs

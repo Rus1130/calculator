@@ -1,11 +1,13 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('node:path');
 
+const DEBUG = false;
+
 function createWindow () {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        title: "Calcpad v.1.4.0",
+        title: "Calcpad v.1.4.1",
         icon: path.join(__dirname, 'icon.png'),
         webPreferences: {
             nodeIntegration: true,
@@ -15,7 +17,7 @@ function createWindow () {
 
     Menu.setApplicationMenu(null);
     win.loadFile('index.html');
-    // win.webContents.openDevTools({ mode: 'detach' });
+    if(DEBUG) win.webContents.openDevTools({ mode: 'detach' });
 
     win.setAlwaysOnTop(true);
     win.setAlwaysOnTop(false);
@@ -23,6 +25,7 @@ function createWindow () {
     
     win.on('close', (e) => {
         win.webContents.send('app-before-quit');
+        if(DEBUG) win.webContents.send("debug");
     });
 }
 
