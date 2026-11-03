@@ -322,7 +322,7 @@
 
 
     math.import({
-        format: function(x){
+        f: function(x){
             return x.toLocaleString();
         },
         for: function(init, eq, n, index){
@@ -349,14 +349,14 @@
                 else return res;
             } else return result;
         },
-        simplify: function(expr) {
+        s: function(expr) {
             try {
                 return math.simplify(expr).toString();
             } catch (e) {
                 throw new Error("Invalid expression: " + expr + ". " + e.message);
             }
         },
-        timeformat: function(time){
+        tf: function(time){
             function timeformat(input) {
                 const timeUnitsInMinutes = {
                     second: 1 / 60,

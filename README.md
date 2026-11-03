@@ -55,17 +55,17 @@ x = 2
 
 You can also define functions:
 ```
-f(3) => 9
+g(3) => 9
 
 [symbols]
-f(x) = x^2
+g(x) = x^2
 ```
 #### Built-in Functions
 You can use built-in functions like `sin`, `cos`, `tan`, `log`, etc.
-##### format(x<Number\>)
+##### f(x<Number\>)
 This function formats numbers to a locale-specific string, which is useful for displaying results in a more readable format.
 ```
-format(1234567.89) => 1,234,567.89
+f(1234567.89) => 1,234,567.89
 ```
 ##### for(init<String\>, eq<String\>, n<Number\>, index<Number\>)
 This function allows you to iterate over a range of numbers. It is useful for creating loops in your calculations.
@@ -78,12 +78,18 @@ index = if undefined, returns all indexes, otherwise returns the value at that i
 for("x=1", "x^2", 10) => 1,4,9,16,25,36,49,64,81,100
 for("x=1", "x^2", 10, 5) => 25
 ```
-##### timeformat(time<String\>)
+##### tf(time<String\>)
 This function formats a time string into a more readable format.
 ```
-timeformat("375 minutes") => 6 hours, 15 minutes
-timeformat("2 hours 90 minutes") => 3 hours, 30 minutes
-timeformat("76 hours") => 3 days, 4 hours
+tf("375 minutes") => 6 hours, 15 minutes
+tf("2 hours 90 minutes") => 3 hours, 30 minutes
+tf("76 hours") => 3 days, 4 hours
+```
+
+##### s(expr<String\>)
+This function simplifies a mathematical expression.
+```
+idk
 ```
 ## Navigation
 * `Left Click` a tab to select it
